@@ -26,7 +26,7 @@ for index in [0]:
     mainGraph = ga.Graph()
     feed = mainGraph.addOperation(ga.Variable(X), doGradient=False, feederOperation=True)
     feedDrop = mainGraph.addOperation(ga.DropoutOperation(
-        feed, 0.0), doGradient=False, finalOperation=False)
+        feed, 0.25), doGradient=False, finalOperation=False)
 
     cnn1 = ga.addConv2dLayer(mainGraph,
                              inputOperation=feedDrop,
@@ -56,7 +56,7 @@ for index in [0]:
 
     flattenOp = mainGraph.addOperation(ga.FlattenFeaturesOperation(cnn2))
     flattenDrop = mainGraph.addOperation(ga.DropoutOperation(
-        flattenOp, 0.25), doGradient=False, finalOperation=False)
+        flattenOp, 0.5), doGradient=False, finalOperation=False)
 
     l1 = ga.addDenseLayer(mainGraph, 500,
                           inputOperation=flattenDrop,
@@ -89,7 +89,7 @@ for index in [0]:
     adaGrad = ga.adaptiveSGD(trainingData=X,
                              trainingLabels=Y,
                              param0=param0,
-                             epochs=20,
+                             epochs=30,
                              miniBatchSize=100,
                              initialLearningRate=1e-3,
                              beta1=0.9,
@@ -99,7 +99,7 @@ for index in [0]:
                              function=fprime)
 
     params = adaGrad.minimize(printTrainigCost=True, printUpdateRate=False,
-                              dumpParameters="paramsCNN" + str(index) + ".pkl")
+                              dumpParameters="paramsCNN_" + str(index) + ".pkl")
     mainGraph.attachParameters(params)
 
     pickleFileName = "graphSGD_" + str(index) + ".pkl"
