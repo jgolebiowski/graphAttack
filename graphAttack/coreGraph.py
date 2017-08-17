@@ -178,6 +178,7 @@ class Graph(object):
 
     def getGradients(self):
         """Reset th graph and get gradients of the specified variables
+        using the self.feedBackward function()
 
         Returns
         -------
