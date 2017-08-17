@@ -1,6 +1,7 @@
 import graphAttack as ga
 import numpy as np
 import pickle
+import sys
 """Control script"""
 
 
@@ -17,14 +18,16 @@ Ytest = allDatasets["test_labels"]
 Xvalid = allDatasets["valid_dataset"]
 Yvalid = allDatasets["valid_labels"]
 
-index = 0
+index = int(sys.argv[1])
 print("Training with:", index)
+dropValueL = 0.5 / index
+dropValueS = 0.25 / index
 # ------ Build a LeNet archicture CNN
 
 mainGraph = ga.Graph()
 feed = mainGraph.addOperation(ga.Variable(X), doGradient=False, feederOperation=True)
 feedDrop = mainGraph.addOperation(ga.DropoutOperation(
-    feed, 0.25), doGradient=False, finalOperation=False)
+    feed, dropValueS), doGradient=False, finalOperation=False)
 
 cnn1 = ga.addConv2dLayer(mainGraph,
                          inputOperation=feedDrop,
@@ -54,12 +57,12 @@ cnn2 = ga.addConv2dLayer(mainGraph,
 
 flattenOp = mainGraph.addOperation(ga.FlattenFeaturesOperation(cnn2))
 flattenDrop = mainGraph.addOperation(ga.DropoutOperation(
-    flattenOp, 0.5), doGradient=False, finalOperation=False)
+    flattenOp, dropValueL), doGradient=False, finalOperation=False)
 
 l1 = ga.addDenseLayer(mainGraph, 500,
                       inputOperation=flattenDrop,
                       activation=ga.ReLUActivation,
-                      dropoutRate=0.5,
+                      dropoutRate=dropValueL,
                       w=None,
                       b=None)
 l2 = ga.addDenseLayer(mainGraph, 10,
