@@ -50,6 +50,7 @@ fcost = mainGraph.addOperation(
     doGradient=False,
     finalOperation=True)
 
+
 def fprime(p, data, labels):
     mainGraph.feederOperation.assignData(data)
     mainGraph.costOperation.assignLabels(labels)
@@ -60,21 +61,22 @@ def fprime(p, data, labels):
     g = mainGraph.unrollGradients()
     return c, g
 
-param0 = mainGraph.unrollGradientParameters()
-adaGrad = ga.adaptiveSGD(trainingData=X,
-                         trainingLabels=Y,
-                         param0=param0,
-                         epochs=1e2,
-                         miniBatchSize=200,
-                         initialLearningRate=1e-3,
-                         beta1=0.9,
-                         beta2=0.999,
-                         epsilon=1e-8,
-                         testFrequency=1e2,
-                         function=fprime)
 
-params = adaGrad.minimize(printTrainigCost=True, printUpdateRate=False,
-                          dumpParameters="paramsDense" + str(index) + ".pkl")
+param0 = mainGraph.unrollGradientParameters()
+adamGrad = ga.adaptiveSGD(trainingData=X,
+                          trainingLabels=Y,
+                          param0=param0,
+                          epochs=1e2,
+                          miniBatchSize=200,
+                          initialLearningRate=1e-3,
+                          beta1=0.9,
+                          beta2=0.999,
+                          epsilon=1e-8,
+                          testFrequency=1e2,
+                          function=fprime)
+
+params = adamGrad.minimize(printTrainigCost=True, printUpdateRate=False,
+                           dumpParameters="paramsDense" + str(index) + ".pkl")
 mainGraph.attachParameters(params)
 
 pickleFileName = "graphSGD_" + str(index) + ".pkl"

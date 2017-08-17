@@ -40,6 +40,94 @@ class Node(object):
         output = "<%s>" % self.name
         return output
 
+    def __add__(self, other):
+        """Add operaition through operator overloading
+
+        Parameters
+        ----------
+        other : ga.Node
+            Second Node ot perform the operation on
+
+        Returns
+        -------
+        ga.operation
+            AddOperation
+
+        Raises
+        ------
+        ValueError
+            This can only be performed on two Node instances
+        """
+        if not isinstance(other, Node):
+            raise ValueError("This can only be performed on two Node instances")
+        return AddOperation(self, other)
+
+    def __matmul__(self, other):
+        """matmul operaition through operator overloading
+
+        Parameters
+        ----------
+        other : ga.Node
+            Second Node ot perform the operation on
+
+        Returns
+        -------
+        ga.operation
+            MatMatmulOperation
+
+        Raises
+        ------
+        ValueError
+            This can only be performed on two Node instances
+        """
+        if not isinstance(other, Node):
+            raise ValueError("This can only be performed on two Node instances")
+        return MatMatmulOperation(self, other)
+
+    def __mul__(self, other):
+        """multiply operaition through operator overloading
+
+        Parameters
+        ----------
+        other : ga.Node
+            Second Node ot perform the operation on
+
+        Returns
+        -------
+        ga.operation
+            MultiplyOperation
+
+        Raises
+        ------
+        ValueError
+            This can only be performed on two Node instances
+        """
+        if not isinstance(other, Node):
+            raise ValueError("This can only be performed on two Node instances")
+        return MultiplyOperation(self, other)
+
+    def __truediv__(self, other):
+        """Divide operaition through operator overloading
+
+        Parameters
+        ----------
+        other : ga.Node
+            Second Node ot perform the operation on
+
+        Returns
+        -------
+        ga.operation
+            DivideOperation
+
+        Raises
+        ------
+        ValueError
+            This can only be performed on two Node instances
+        """
+        if not isinstance(other, Node):
+            raise ValueError("This can only be performed on two Node instances")
+        return DivideOperation(self, other)
+
     def prependName(self, string):
         """Prepend name with a string
 
@@ -75,6 +163,11 @@ class Node(object):
         """
         self.outputs.append(output)
         self.endNode = False
+
+    def resetOutputs(self):
+        """Reset outputs of this node"""
+        self.outputs = []
+        self.endNode = True
 
     def reset(self):
         """Reset the values and gradients held by this operation"""
@@ -162,3 +255,6 @@ def reduce_shape(inputArr, targetArr):
         pass
 
     raise ValueError("The two arrays cannot be reduced properly")
+
+
+from .operations.twoInputOperations import AddOperation, MatMatmulOperation, MultiplyOperation, DivideOperation

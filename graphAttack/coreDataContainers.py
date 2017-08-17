@@ -26,6 +26,8 @@ class Variable(Node):
     def __init__(self, data=None):
         super().__init__()
 
+        if not isinstance(data, np.ndarray):
+            raise ValueError("Must use np.ndarrays as data in Variables")
         self.result = data
         self.inputA = self.result
         self.gradA = None

@@ -16,16 +16,12 @@ class adaptiveSGD(object):
         features for each example
     trainLabels : np.array
         labels for each example
+    param0 : np.array
+        Initial parameters
     epochs : int
         number of epochs to run the minimizer
     miniBatchSize : int
         size of the mini batch
-    param0 : np.array
-        Initial parameters
-    testFrequency : int
-        How many minibatches to average the cost over for testing
-    self.costLists : np.array
-        A list of the costs for each test iteration, usefull for plotting
 
     initialLearningRate : flooat
         Initial learning rate (typical choice: 1e-3)
@@ -36,7 +32,9 @@ class adaptiveSGD(object):
     epsilon : float
         epsilon Adam parameter (typical choice: 1e-8)
 
-   function : float
+    testFrequency : int
+        How many minibatches to average the cost over for testing
+    function : float
         Function to minimize that is of form
         (cost, gradient) = function(params, FeaturesMatrix, LabelsMatrix)
 
@@ -84,7 +82,7 @@ class adaptiveSGD(object):
 
         self.func = function
 
-    def minimize(self, printTrainigCost=True, printUpdateRate=True, dumpParameters=None):
+    def minimize(self, printTrainigCost=True, printUpdateRate=False, dumpParameters=None):
         """find the minimum of the function
 
         Parameters

@@ -89,10 +89,10 @@ class MultiplyOperation(TwoInputOperation):
             for out in self.outputs:
                 grad += reduce_shape(out.getGradient(self), grad)
 
-            if (input == 0):
-                grad = grad * self.inputB.getValue()
-            elif (input == 1):
-                grad = grad * self.inputA.getValue()
+        if (input == 0):
+            grad = grad * self.inputB.getValue()
+        elif (input == 1):
+            grad = grad * self.inputA.getValue()
         return grad
 
 
@@ -180,10 +180,10 @@ class DivideOperation(TwoInputOperation):
             for out in self.outputs:
                 grad += reduce_shape(out.getGradient(self), grad)
 
-            if (input == 0):
-                grad = np.divide(grad, self.inputB.getValue())
-            elif (input == 1):
-                grad = np.divide(grad, np.square(self.inputA.getValue()))
+        if (input == 0):
+            grad = np.divide(grad, self.inputB.getValue())
+        elif (input == 1):
+            grad = np.divide(grad, np.square(self.inputA.getValue()))
         return grad
 
 

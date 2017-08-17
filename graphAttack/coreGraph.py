@@ -3,6 +3,7 @@ from .coreDataContainers import Variable
 from .coreOperation import CostOperation
 from .operations.activationOperations import DropoutOperation
 import numpy as np
+import warnings
 
 
 class Graph(object):
@@ -59,7 +60,7 @@ class Graph(object):
         Parameters
         ----------
         operation : ga.Operation
-            Operation to be added
+            Operation or Variable to be added
         doGradient : bool
             When true, calculate the derevative of the final operation with respect to this
             operation when self.getGradients() is called
@@ -90,18 +91,22 @@ class Graph(object):
 
         if (doGradient):
             if not (isinstance(operation, Variable)):
-                raise ValueError("Graph can only provide gradients with respect to variables!\
-                    Call individual ops.getGradient(inputOperation) for individual gradients.")
+                # TODO this error is getting a false positive in jupytre notebook for some reason
+                warnings.warn("Graph can only provide gradients with respect to variables!\
+                     Call individual ops.getGradient(inputOperation) for individual gradients.")
+                # raise RuntimeWarning("Graph can only provide gradients with respect to variables!\
+                #     Call individual ops.getGradient(inputOperation) for individual gradients.")
             self.gradientOps.append(operation)
         if (finalOperation):
             self.finalOperation = operation
             if (isinstance(operation, CostOperation)):
                 self.costOperation = operation
         if (feederOperation):
-            if (isinstance(operation, Variable)):
-                self.feederOperation = operation
-            else:
-                raise ValueError("Only variables can be feeders")
+            if not (isinstance(operation, Variable)):
+                # TODO this error is getting a false positive in jupytre notebook for some reason
+                warnings.warn("Only variables can be feeders")
+                # raise ValueError("Only variables can be feeders")
+            self.feederOperation = operation
         return operation
 
     def unrollGradientParameters(self):
@@ -115,8 +120,8 @@ class Graph(object):
         """
         params = np.empty(0)
         for op in self.gradientOps:
-            if isinstance(op, Variable):
-                params = np.hstack((params, np.ravel(op.getValue())))
+            # if isinstance(op, Variable):
+            params = np.hstack((params, np.ravel(op.getValue())))
         return params
 
     def attachParameters(self, params):
@@ -130,11 +135,11 @@ class Graph(object):
         """
         pointer = 0
         for op in self.gradientOps:
-            if isinstance(op, Variable):
-                nElems = np.size(op.result)
-                shaperino = op.shape
-                op.assignData(np.reshape(params[pointer: pointer + nElems], shaperino))
-                pointer += nElems
+            # if isinstance(op, Variable):
+            nElems = np.size(op.result)
+            shaperino = op.shape
+            op.assignData(np.reshape(params[pointer: pointer + nElems], shaperino))
+            pointer += nElems
 
     def feedForward(self):
         """feed forwards through the graph obtaining the value
@@ -222,8 +227,8 @@ class Graph(object):
         """
         grads = np.empty(0)
         for op in self.gradientOps:
-            if isinstance(op, Variable):
-                grads = np.hstack((grads, np.ravel(op.getGradient())))
+            # if isinstance(op, Variable):
+            grads = np.hstack((grads, np.ravel(op.getGradient())))
         return grads
 
     def resetAll(self):
