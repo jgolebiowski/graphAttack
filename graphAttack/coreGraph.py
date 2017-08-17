@@ -91,11 +91,8 @@ class Graph(object):
 
         if (doGradient):
             if not (isinstance(operation, Variable)):
-                # TODO this error is getting a false positive in jupytre notebook for some reason
-                warnings.warn("Graph can only provide gradients with respect to variables!\
-                     Call individual ops.getGradient(inputOperation) for individual gradients.")
-                # raise RuntimeWarning("Graph can only provide gradients with respect to variables!\
-                #     Call individual ops.getGradient(inputOperation) for individual gradients.")
+                raise ValueError("Graph can only provide gradients with respect to variables!\
+                                  Call individual ops.getGradient(inputOperation) for individual gradients.")
             self.gradientOps.append(operation)
         if (finalOperation):
             self.finalOperation = operation
@@ -103,9 +100,7 @@ class Graph(object):
                 self.costOperation = operation
         if (feederOperation):
             if not (isinstance(operation, Variable)):
-                # TODO this error is getting a false positive in jupytre notebook for some reason
-                warnings.warn("Only variables can be feeders")
-                # raise ValueError("Only variables can be feeders")
+                raise ValueError("Only variables can be feeders")
             self.feederOperation = operation
         return operation
 
@@ -120,7 +115,9 @@ class Graph(object):
         """
         params = np.empty(0)
         for op in self.gradientOps:
-            # if isinstance(op, Variable):
+            if not (isinstance(op, Variable)):
+                raise ValueError("Graph can only provide gradients with respect to variables,\
+                                  There was an error in setting up")
             params = np.hstack((params, np.ravel(op.getValue())))
         return params
 
@@ -135,7 +132,9 @@ class Graph(object):
         """
         pointer = 0
         for op in self.gradientOps:
-            # if isinstance(op, Variable):
+            if not (isinstance(op, Variable)):
+                raise ValueError("Graph can only provide gradients with respect to variables,\
+                                  There was an error in setting up")
             nElems = np.size(op.result)
             shaperino = op.shape
             op.assignData(np.reshape(params[pointer: pointer + nElems], shaperino))
@@ -227,7 +226,9 @@ class Graph(object):
         """
         grads = np.empty(0)
         for op in self.gradientOps:
-            # if isinstance(op, Variable):
+            if not (isinstance(op, Variable)):
+                raise ValueError("Graph can only provide gradients with respect to variables,\
+                                  There was an error in setting up")
             grads = np.hstack((grads, np.ravel(op.getGradient())))
         return grads
 
