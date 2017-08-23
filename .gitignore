@@ -1,5 +1,7 @@
-# Do not add the dataset
+# Do not add the dataset and stored files
 dataSet/*
+data/*
+testing/*
 
 # Do not add any pickle files that might be used throughtout the run
 *\.pkl
@@ -7,6 +9,9 @@ dataSet/*
 
 # Do not add logfiles
 *\.log
+
+#Do not add workspace
+workspace.py
 
 ###########################################################
 # Below standard .gitignore for python

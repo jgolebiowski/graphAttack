@@ -35,6 +35,30 @@ def generateRandomVariable(shape, transpose=False, nInputs=None):
         return Variable(X)
 
 
+def generateZeroVariable(shape, transpose=False):
+    """Generate a ga.Variable of a given shape filled with zeros
+
+    Parameters
+    ----------
+    shape : tuple
+        Shape of the desired variable
+    transpose : bool
+        If true, generate ga.Transposed variable with the shape being shape.T
+
+
+    Returns
+    -------
+    ga.Variable
+        generated random variable
+    """
+
+    X = np.zeros(shape)
+    if (transpose):
+        return Variable(X.T)
+    else:
+        return Variable(X)
+
+
 def calculateAccuracy(graph, data, labels):
     """Feed data to a graph, ask it for predictions and obtain accuracy
 

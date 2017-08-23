@@ -18,10 +18,11 @@ Ytest = allDatasets["test_labels"]
 Xvalid = allDatasets["valid_dataset"]
 Yvalid = allDatasets["valid_labels"]
 
-index = int(sys.argv[1])
+# index = int(sys.argv[1])
+index = 0
 print("Training with:", index)
-dropValueL = 0.5 / index
-dropValueS = 0.25 / index
+dropValueL = 0.125
+dropValueS = 0.067
 # ------ Build a LeNet archicture CNN
 
 mainGraph = ga.Graph()
@@ -76,9 +77,10 @@ fcost = mainGraph.addOperation(
     doGradient=False,
     finalOperation=True)
 
+
 def fprime(p, data, labels):
     mainGraph.feederOperation.assignData(data)
-    mainGraph.costOperation.assignLabels(labels)
+    mainGraph.finalOperation.assignLabels(labels)
     mainGraph.attachParameters(p)
     mainGraph.resetAll()
     c = mainGraph.feedForward()
@@ -86,11 +88,12 @@ def fprime(p, data, labels):
     g = mainGraph.unrollGradients()
     return c, g
 
+
 param0 = mainGraph.unrollGradientParameters()
 adaGrad = ga.adaptiveSGD(trainingData=X,
                          trainingLabels=Y,
                          param0=param0,
-                         epochs=30,
+                         epochs=20,
                          miniBatchSize=100,
                          initialLearningRate=1e-3,
                          beta1=0.9,
@@ -101,6 +104,12 @@ adaGrad = ga.adaptiveSGD(trainingData=X,
 
 params = adaGrad.minimize(printTrainigCost=True, printUpdateRate=False,
                           dumpParameters="paramsCNN_" + str(index) + ".pkl")
+
+# pickleFilename = "paramsCNN_" + str(index) + ".pkl"
+# with open(pickleFilename, "rb") as fp:
+#     params = pickle.load(fp)
+
+
 mainGraph.attachParameters(params)
 
 pickleFileName = "graphSGD_" + str(index) + ".pkl"

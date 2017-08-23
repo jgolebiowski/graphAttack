@@ -160,6 +160,10 @@ class SoftmaxActivation(SingleInputOperation):
         super().__init__(inputA)
         self.axis = axis
 
+    def setShape(self):
+        """Set the output shape"""
+        self.shape = self.inputA.shape
+
     def perform(self, X, theta=1.0):
         """
         Compute the softmax of each element along an axis of X.
@@ -227,6 +231,70 @@ class SoftmaxActivation(SingleInputOperation):
         grad = self.getValue() *\
             np.subtract(grad, np.expand_dims(np.sum(grad * self.getValue(), axis=self.axis), axis=self.axis))
         return grad
+
+
+class TanhActivation(SingleInputOperation):
+    """tanh activation function, zeres all negative entries
+
+    Attributes
+    ----------
+    name : str
+        Name of the operation
+    result : np.array
+        Output of the operation
+    testing : bool
+        Flag specifying if the operation is in testing (making prefictions: True)
+        or training (optimizing parameters: False) mode
+
+    gradA : np.array
+        gradient with respect to inputA
+    inputA : ga.Operation
+        Operation feeding data A into this operation
+    shape : tuple
+        shape of the output
+    """
+    name = "TanhActivation"
+
+    def setShape(self):
+        """Set the output shape"""
+        self.shape = self.inputA.shape
+
+    def perform(self, a):
+        """Perform ReLU, element wise
+
+        Parameters
+        ----------
+        a : np.array
+            Input data
+
+        Returns
+        -------
+        np.array
+            Output data
+        """
+        return np.tanh(a)
+
+    def performGradient(self, input=None):
+        """Find out the gradient with respect to the parameter
+
+        Parameters
+        ----------
+        input : int
+            placeholder variable since this operation has only one input
+
+        Returns
+        -------
+        np.array
+            Gradient propagated through this operation
+        """
+        if (self.endNode):
+            grad = np.ones(self.inputA.shape)
+        else:
+            grad = np.zeros(self.inputA.shape)
+            for out in self.outputs:
+                grad += out.getGradient(self)
+
+        return (1 - np.square(self.getValue())) * grad
 
 
 class DropoutOperation(SingleInputOperation):

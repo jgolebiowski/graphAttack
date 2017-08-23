@@ -1,7 +1,6 @@
 import graphAttack as ga
 import numpy as np
 import pickle
-import tensorflow as tf
 """Control script"""
 
 pickleFilename = "testDataTensor.pkl"
@@ -54,7 +53,7 @@ fcost = mainGraph.addOperation(
 
 def fprime(p, data, labels):
     mainGraph.feederOperation.assignData(data)
-    mainGraph.costOperation.assignLabels(labels)
+    mainGraph.finalOperation.assignLabels(labels)
     mainGraph.attachParameters(p)
     mainGraph.resetAll()
     c = mainGraph.feedForward()
@@ -67,7 +66,7 @@ def f(p):
     data = Xt
     labels = Yt
     mainGraph.feederOperation.assignData(data)
-    mainGraph.costOperation.assignLabels(labels)
+    mainGraph.finalOperation.assignLabels(labels)
     mainGraph.attachParameters(p)
     mainGraph.resetAll()
     c = mainGraph.feedForward()

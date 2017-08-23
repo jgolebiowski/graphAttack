@@ -5,9 +5,10 @@ from ..coreNode import broadcast_shape, reduce_shape
 import numpy as np
 
 
-class QuadratiCcostOperation(CostOperation):
+class QuadraticCostOperation(CostOperation):
     """Evaliate the quadratic cost given the labels
 
+    QuadraticCostOperation(self, inputA, labels)
     Attributes
     ----------
     name : str
@@ -29,8 +30,8 @@ class QuadratiCcostOperation(CostOperation):
     shape : tuple
         shape of the output
     """
-    
-    name = "QuadratiCcostOperation"
+
+    name = "QuadraticCostOperation"
 
     def perform(self, a, y):
         """Perform costOperation
@@ -75,6 +76,7 @@ class QuadratiCcostOperation(CostOperation):
 
 class CrossEntropyCostSoftmax(CostOperation):
     """Evaliate the CrossEntropy cost given the labels, works with softmax activation ONLY
+    CrossEntropyCostSoftmax(self, inputA, labels)
 
     Attributes
     ----------
@@ -139,21 +141,3 @@ class CrossEntropyCostSoftmax(CostOperation):
             for out in self.outputs:
                 grad += out.getGradient(self)
         return grad * (1.0 / self.nExamples) * (-self.labels / self.inputA.getValue())
-
-    # def perform(self, a):
-    #     """Perform MatMul"""
-    #     return np.sum(np.square(a))
-
-    # def performGradient(self, input=None):
-    #     """Find out the gradient with respect to the parameter
-    #     the key is:
-    #     inputA => 0
-    #     inputB => 1"""
-    #     if (self.endNode):
-    #         grad = np.ones(self.inputA.shape)
-    #     else:
-    #         grad = np.zeros(self.inputA.shape)
-    #         for out in self.outputs:
-    #             grad += out.getGradient(self)
-
-    #     return grad * self.inputA.getValue() * 2

@@ -1,19 +1,15 @@
 """Graph definition"""
 from .coreDataContainers import Variable
 from .coreOperation import CostOperation
-from .operations.activationOperations import DropoutOperation
 import numpy as np
 import warnings
 
 
-class Graph(object):
-
-    """Computational graph, main objects holding others together
+class basicGraph(object):
+    """Simplistic graph object that can be used for storage
 
     Attributes
     ----------
-    costOperation : np.CostOperation
-        final operation of the graph, evaluating cost. Usually the final operation
     endOperations : list
         list of operations that do not have a follow up
     feederOperation : ga.Operation
@@ -28,11 +24,11 @@ class Graph(object):
         List of all operations
     """
 
-    def __init__(self):
+    def __init__(self, printWarnings=True):
+        self.printWarnings = printWarnings
         self.operations = []
         self.gradientOps = []
         self.finalOperation = None
-        self.costOperation = None
         self.feederOperation = None
         self.endOperations = []
 
@@ -95,14 +91,38 @@ class Graph(object):
                                   Call individual ops.getGradient(inputOperation) for individual gradients.")
             self.gradientOps.append(operation)
         if (finalOperation):
+            if (not isinstance(operation, CostOperation) and self.printWarnings):
+                warnings.warn("It is often preferred that the final operation is a ga.CostOperation",
+                              UserWarning)
             self.finalOperation = operation
-            if (isinstance(operation, CostOperation)):
-                self.costOperation = operation
         if (feederOperation):
             if not (isinstance(operation, Variable)):
                 raise ValueError("Only variables can be feeders")
             self.feederOperation = operation
         return operation
+
+
+class Graph(basicGraph):
+    """Computational graph, main objects holding others together
+
+    Attributes
+    ----------
+    endOperations : list
+        list of operations that do not have a follow up
+    feederOperation : ga.Operation
+        Operation feeding the data to the graph
+    finalOperation : np.Operation
+        final operation of the graph, most often the cost operation
+    gradientOps : list
+        List of operation that need their gradients evaliated
+    nOperations : int
+        Total number of operations
+    operations : list
+        List of all operations
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def unrollGradientParameters(self):
         """For each variable (NOT operation) that needs a gradient calculated
@@ -201,15 +221,15 @@ class Graph(object):
         AttributeError
             Must add a cost operation
         """
-        if self.costOperation is None:
-            raise AttributeError("Must add a cost operation")
+        if not isinstance(self.finalOperation, CostOperation):
+            raise AttributeError("Final operation muts be a cost operation to make predictions")
 
         # ------ Set all operations to testing
         for op in self.operations:
             op.testing = True
 
         self.resetAll()
-        pred = self.costOperation.makePredictions()
+        pred = self.finalOperation.makePredictions()
 
         # ------ Set all operations to training
         for op in self.operations:

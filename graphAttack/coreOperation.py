@@ -33,7 +33,6 @@ class Operation(Node):
         """Obtain value of the oprtation"""
         raise NotImplementedError("This is not yet implemented")
 
-
     def perform(self, *args, **kwargs):
         """Return the value of the operation given inputs"""
         raise NotImplementedError("This is an abstract class, this routine should be implemented in children")
@@ -46,7 +45,6 @@ class Operation(Node):
         """Return the derevative of this operation with respect to
         each input"""
         raise NotImplementedError("This is an abstract class, this routine should be implemented in children")
-
 
 
 class TwoInputOperation(Operation):
@@ -290,6 +288,10 @@ class CostOperation(SingleInputOperation):
 
     def assignLabels(self, labels):
         """Assign a new set of labels"""
+        if labels.shape != self.inputA.shape:
+            message = "Shapes of labels and input must match: " +\
+                    str(labels.shape) + " != " + str(self.inputA.shape)
+            raise ValueError(message)
         self.labels = labels
         self.setShape()
 
@@ -325,3 +327,99 @@ class CostOperation(SingleInputOperation):
                 predictions[i, indexMax] = 1
 
         return predictions
+
+# class MultipleInputOperation(Operation):
+#     """Operation accepting two input and returning one output
+
+#     Attributes
+#     ----------
+#     name : str
+#         Name of the operation
+#     result : np.array
+#         Output of the operation
+#     testing : bool
+#         Flag specifying if the operation is in testing (making prefictions: True)
+#         or training (optimizing parameters: False) mode
+
+#     gradA : np.array
+#         gradient with respect to inputA
+#     gradB : np.array
+#         gradient with respect to inputB
+#     inputA : ga.Operation
+#         Operation feeding data A into this operation
+#     inputB : ga.Operation
+#         Operation feeding data B into this operation
+#     shape : tuple
+#         shape of the output
+#     """
+#     name = "MultipleInputOperation"
+
+#     def __init__(self):
+#         super().__init__()
+#         self.inputs = []
+#         self.grads = []
+
+#     def __repr__(self):
+#         """Represent as a string - usefull for printing"""
+#         output = "<%s with inputs: ( " % (self.name)
+
+#         for op in self.inputs:
+#             output += "%s, " % op.name
+#         output += ") and outputs: ("
+
+#         for op in self.outputs:
+#             output += "%s, " % op.name
+#         output += ")>"
+#         return output
+
+#     def setShape(self):
+#         """Set the output shape"""
+#         self.shape = broadcast_shape(np.shape(self.inputA), np.shape(self.inputB))
+
+#     def reset(self):
+#         """Reset the values and gradients held by this operation"""
+#         self.result = None
+#         self.gradA = None
+#         self.gradB = None
+#         self.setShape()
+
+#     def getValue(self):
+#         """Return a vaue of this operation
+
+#         Returns
+#         -------
+#         np.array
+#             Output value
+#         """
+#         if (self.result is None):
+#             self.result = self.perform(self.inputA.getValue(), self.inputB.getValue())
+#         return self.result
+
+#     def getGradient(self, input):
+#         """Obtain gradient with respect ot a chosen input
+
+#         Parameters
+#         ----------
+#         input : ga.Operation
+#             Operation with respect to which the graient is calculated
+
+#         Returns
+#         -------
+#         np.array
+#             Gradient value
+
+#         Raises
+#         ------
+#         ValueError
+#             Must select either gradient from inputA or inputB
+#         """
+#         if (input is self.inputA):
+#             if (self.gradA is None):
+#                 self.gradA = self.performGradient(input=0)
+#             return self.gradA
+#         elif (input is self.inputB):
+#             if (self.gradB is None):
+#                 self.gradB = self.performGradient(input=1)
+#             return self.gradB
+#         else:
+#             raise ValueError("Must select either gradient from inputA or inputB")

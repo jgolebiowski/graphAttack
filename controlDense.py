@@ -43,7 +43,7 @@ def f(x):
 
 def fprime(p, data, labels):
     mainGraph.feederOperation.assignData(data)
-    mainGraph.costOperation.assignLabels(labels)
+    mainGraph.finalOperation.assignLabels(labels)
     mainGraph.attachParameters(p)
     mainGraph.resetAll()
     c = mainGraph.feedForward()
