@@ -32,8 +32,6 @@ def f(p, costOperationsList=costOperationsList, mainGraph=mainGraph):
     for index, cop in enumerate(costOperationsList):
         cop.assignLabels(labels[:, index, :])
     mainGraph.attachParameters(p)
-
-    mainGraph.resetAll()
     c = mainGraph.feedForward()
     return c
 
@@ -44,8 +42,6 @@ def fprime(p, data, labels, costOperationsList=costOperationsList, mainGraph=mai
     for index, cop in enumerate(costOperationsList):
         cop.assignLabels(labels[:, index, :])
     mainGraph.attachParameters(p)
-
-    mainGraph.resetAll()
     c = mainGraph.feedForward()
     mainGraph.feedBackward()
     g = mainGraph.unrollGradients()

@@ -53,9 +53,9 @@ fcost = mainGraph.addOperation(
 
 def fprime(p, data, labels):
     mainGraph.feederOperation.assignData(data)
+    mainGraph.resetAll()
     mainGraph.finalOperation.assignLabels(labels)
     mainGraph.attachParameters(p)
-    mainGraph.resetAll()
     c = mainGraph.feedForward()
     mainGraph.feedBackward()
     g = mainGraph.unrollGradients()
@@ -66,9 +66,9 @@ def f(p):
     data = Xt
     labels = Yt
     mainGraph.feederOperation.assignData(data)
+    mainGraph.resetAll()
     mainGraph.finalOperation.assignLabels(labels)
     mainGraph.attachParameters(p)
-    mainGraph.resetAll()
     c = mainGraph.feedForward()
     return c
 
