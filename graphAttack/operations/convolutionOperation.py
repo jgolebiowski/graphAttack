@@ -2,8 +2,8 @@
 
 from ..coreOperation import *
 from ..coreNode import broadcast_shape, reduce_shape
+
 import numpy as np
-import math
 
 
 class Conv2dOperation(TwoInputOperation):
@@ -167,7 +167,8 @@ class Conv2dOperation(TwoInputOperation):
 
         if (input == 0):
             gradCols = np.matmul(gradCols, self.inputBCols)
-            grad = col2im_indices(gradCols, self.inputA.shape, FH, FW, padding=self.padding, stride=self.stride)
+            grad = col2im_indices(gradCols, self.inputA.shape, FH, FW,
+                                  padding=self.padding, stride=self.stride)
         elif (input == 1):
             gradCols = np.matmul(self.inputACols.T, gradCols)
             grad = gradCols.T.reshape(self.inputB.shape)
@@ -220,7 +221,7 @@ class MaxPoolOperation(SingleInputOperation):
     def setShape(self):
         """Set the output shape"""
         if (((self.inputA.shape[2] - self.poolHeight) % self.stride != 0) or
-            ((self.inputA.shape[3] - self.poolWidth) % self.stride != 0)):
+                ((self.inputA.shape[3] - self.poolWidth) % self.stride != 0)):
             raise ValueError("""stride and padding should be compatible so that
                             Image weigth/heigth - poolHeigth/Width MODULO stride == 0""")
         # ------ Find the output shape
@@ -283,11 +284,10 @@ class MaxPoolOperation(SingleInputOperation):
         gradCols = np.zeros_like(self.aCols)
         gradCols[np.arange(self.aColsArgmax.size), self.aColsArgmax] = inpGradCols
 
-        grad = col2im_indices(gradCols, (N * C, 1, H, W), self.poolHeight, self.poolWidth, padding=0, stride=self.stride)
+        grad = col2im_indices(gradCols, (N * C, 1, H, W), self.poolHeight,
+                              self.poolWidth, padding=0, stride=self.stride)
         grad = grad.reshape(self.inputA.shape)
         return grad
-
-
 
 
 ###############################################################################
@@ -354,4 +354,3 @@ def col2im_indices(cols, x_shape, field_height=3, field_width=3, padding=1,
     if padding == 0:
         return x_padded
     return x_padded[:, :, padding:-padding, padding:-padding]
-

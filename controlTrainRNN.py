@@ -17,18 +17,19 @@ mainGraph = ga.Graph(False)
 feed = mainGraph.addOperation(ga.Variable(x), feederOperation=True)
 
 finalCost,\
-hactivations,\
-costOperationsList = ga.addRNNnetwork(mainGraph,
-                                      inputOperation=feed,
-                                      activation=ga.TanhActivation,
-                                      costActivation=ga.SoftmaxActivation,
-                                      costOperation=ga.CrossEntropyCostSoftmax,
-                                      nHidden=100,
-                                      labels=None)
+    hactivations,\
+    costOperationsList = ga.addRNNnetwork(mainGraph,
+                                          inputOperation=feed,
+                                          activation=ga.TanhActivation,
+                                          costActivation=ga.SoftmaxActivation,
+                                          costOperation=ga.CrossEntropyCostSoftmax,
+                                          nHidden=100,
+                                          labels=None)
 
 # progress = 0
 # paramLen = len(mainGraph.unrollGradientParameters())
 
+ 
 def f(p, costOperationsList=costOperationsList, mainGraph=mainGraph):
     data = x
     labels = y
@@ -59,6 +60,7 @@ def fprime(p, data, labels, costOperationsList=costOperationsList, mainGraph=mai
     g = mainGraph.unrollGradients()
     return c, g
 
+
 index = 0
 param0 = mainGraph.unrollGradientParameters()
 adaGrad = ga.adaptiveSGD(trainingData=x,
@@ -73,7 +75,7 @@ adaGrad = ga.adaptiveSGD(trainingData=x,
                          testFrequency=1e3,
                          function=fprime)
 
-# params = adaGrad.minimize(printTrainigCost=True, printUpdateRate=False,
+ # params = adaGrad.minimize(printTrainigCost=True, printUpdateRate=False,
 #                           dumpParameters="paramsCNN_" + str(index) + ".pkl")
 pickleFilename = "paramsRNN_" + str(index) + ".pkl"
 with open(pickleFilename, "rb") as fp:
@@ -81,8 +83,10 @@ with open(pickleFilename, "rb") as fp:
 
 mainGraph.attachParameters(params)
 
+
 def array2char(array):
     return index_to_word[np.argmax(array)]
+
 
 def sampleCharacter(previousX, previousH,
                     hactivations=hactivations,
@@ -104,7 +108,7 @@ def sampleCharacter(previousX, previousH,
 
 
 nextH = hactivations[0].getValue().copy()
-nextX = x[0,0]
+nextX = x[0, 0]
 # nextX = np.zeros_like(x[0,0])
 # nextX[int(np.random.random() * vocabSize)] = 1
 
@@ -112,5 +116,7 @@ print(array2char(nextX))
 length = 45
 for index in range(length):
     nextX, nextH = sampleCharacter(nextX, nextH)
-    print(array2char(nextX))
+    pred = np.zeros(nextX.size)
+    pred[np.random.choice(nextX.size, p=nextX[0])] = 1
+    print(array2char(pred))
     # print(array2char(nextX), array2char(x[0, index + 1]))

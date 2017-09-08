@@ -72,7 +72,7 @@ adamGrad = ga.adaptiveSGD(trainingData=X,
                           beta1=0.9,
                           beta2=0.999,
                           epsilon=1e-8,
-                          testFrequency=1e2,
+                          testFrequency=1e3,
                           function=fprime)
 
 params = adamGrad.minimize(printTrainigCost=True, printUpdateRate=False,

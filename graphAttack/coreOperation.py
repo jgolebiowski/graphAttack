@@ -290,7 +290,7 @@ class CostOperation(SingleInputOperation):
         """Assign a new set of labels"""
         if labels.shape != self.inputA.shape:
             message = "Shapes of labels and input must match: " +\
-                    str(labels.shape) + " != " + str(self.inputA.shape)
+                str(labels.shape) + " != " + str(self.inputA.shape)
             raise ValueError(message)
         self.labels = labels
         self.setShape()
@@ -307,23 +307,36 @@ class CostOperation(SingleInputOperation):
             self.result = self.perform(self.inputA.getValue(), self.labels)
         return self.result
 
-    def makePredictions(self):
+    def makePredictions(self, choice=False):
         """Do not evaluate the cost but instead make predictions besed on input
 
         Returns
         -------
         np.array
             Predictions using the current hypothesis: values fed to cost evaluation operation
+
+        Parameters
+        ----------
+        choice : bool
+            If true, sample from the probability density based on the models results
+            instead of using the maximum argument
         """
         shape = self.inputA.getValue().shape
         predictions = np.zeros(shape)
 
         if np.size(shape) == 1:
-            indexMax = np.argmax(self.inputA.getValue())
+            if choice:
+                indexMax = np.random.choice(self.inputA.getValue().size, p=self.inputA.getValue())
+            else:
+                indexMax = np.argmax(self.inputA.getValue())
             predictions[indexMax] = 1
         else:
             for i, example in enumerate(self.inputA.getValue()):
-                indexMax = np.unravel_index(example.argmax(), example.shape)
+                if choice:
+                    argmax = np.random.choice(example.size, p=example)
+                else:
+                    argmax = example.argmax()
+                indexMax = np.unravel_index(argmax, example.shape)
                 predictions[i, indexMax] = 1
 
         return predictions

@@ -14,14 +14,14 @@ xop = mainGraph.addOperation(ga.Variable(x), feederOperation=True)
 
 
 finalCost,\
-hactivations,\
-costOperationsList = ga.addRNNnetwork(mainGraph,
-                                      inputOperation=xop,
-                                      activation=ga.TanhActivation,
-                                      costActivation=ga.SoftmaxActivation,
-                                      costOperation=ga.CrossEntropyCostSoftmax,
-                                      nHidden=5,
-                                      labels=None)
+    hactivations,\
+    costOperationsList = ga.addRNNnetwork(mainGraph,
+                                          inputOperation=xop,
+                                          activation=ga.TanhActivation,
+                                          costActivation=ga.SoftmaxActivation,
+                                          costOperation=ga.CrossEntropyCostSoftmax,
+                                          nHidden=5,
+                                          labels=None)
 
 
 def f(p, costOperationsList=costOperationsList, mainGraph=mainGraph):
@@ -65,6 +65,7 @@ def sampleCharacter(previousX, previousH,
     newX = costOperationsList[0].inputA.getValue()
 
     return newX, newH
+
 
 import scipy.optimize
 params = mainGraph.unrollGradientParameters()
