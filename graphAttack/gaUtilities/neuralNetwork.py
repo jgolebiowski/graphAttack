@@ -197,7 +197,7 @@ def addRNNnetwork(mainGraph,
         if labels.shape != (nExamples, seriesLength, nHidden):
             raise ValueError("Labels must be in a compatible shape (nExamples, seriesLength, nHidden)")
     else:
-        labels = np.random.random((nExamples, seriesLength, nFeatures))
+        labels = np.zeros((nExamples, seriesLength, nHidden))
 
     h0 = generateZeroVariable(shape=(1, nHidden),
                               transpose=False)

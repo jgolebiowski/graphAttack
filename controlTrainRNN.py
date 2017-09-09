@@ -4,17 +4,17 @@ import pickle
 """Control script"""
 
 
-pickleFilename = "dataSet/redditCommentFormatted.pkl"
+pickleFilename = "dataSet/trump_campaign.pkl"
 with open(pickleFilename, "rb") as fp:
-    x, y, index_to_word, word_to_index = pickle.load(fp)
+    x, index_to_word, word_to_index = pickle.load(fp)
 
-vocabSize = 2000
-nExamples, seriesLength, nFeatures = x.shape
-
+seriesLength, nFeatures = x.shape
+nExamples = 100
+exampleLength = 32
+dummyX = np.zeros((nExamples, exampleLength, nFeatures))
 
 mainGraph = ga.Graph(False)
-
-feed = mainGraph.addOperation(ga.Variable(x), feederOperation=True)
+feed = mainGraph.addOperation(ga.Variable(dummyX), feederOperation=True)
 
 finalCost,\
     hactivations,\
@@ -25,28 +25,6 @@ finalCost,\
                                           costOperation=ga.CrossEntropyCostSoftmax,
                                           nHidden=100,
                                           labels=None)
-
-# progress = 0
-# paramLen = len(mainGraph.unrollGradientParameters())
-
- 
-def f(p, costOperationsList=costOperationsList, mainGraph=mainGraph):
-    data = x
-    labels = y
-    mainGraph.feederOperation.assignData(data)
-    mainGraph.resetAll()
-    for index, cop in enumerate(costOperationsList):
-        cop.assignLabels(labels[:, index, :])
-    mainGraph.attachParameters(p)
-
-    mainGraph.resetAll()
-    c = mainGraph.feedForward()
-
-    # global progress
-    # progress += 1
-    # if not (progress % 10):
-    #     print("Progress:", progress, "Out of:", paramLen)
-    return c
 
 
 def fprime(p, data, labels, costOperationsList=costOperationsList, mainGraph=mainGraph):
@@ -63,23 +41,23 @@ def fprime(p, data, labels, costOperationsList=costOperationsList, mainGraph=mai
 
 index = 0
 param0 = mainGraph.unrollGradientParameters()
-adaGrad = ga.adaptiveSGD(trainingData=x,
-                         trainingLabels=y,
-                         param0=param0,
-                         epochs=1e3,
-                         miniBatchSize=2,
-                         initialLearningRate=1e-3,
-                         beta1=0.9,
-                         beta2=0.999,
-                         epsilon=1e-8,
-                         testFrequency=1e3,
-                         function=fprime)
+adaGrad = ga.adaptiveSGDrecurrent(trainingData=x,
+                                  param0=param0,
+                                  epochs=1e3,
+                                  miniBatchSize=nExamples,
+                                  exampleLength=exampleLength,
+                                  initialLearningRate=1e-3,
+                                  beta1=0.9,
+                                  beta2=0.999,
+                                  epsilon=1e-8,
+                                  testFrequency=1e3,
+                                  function=fprime)
 
- # params = adaGrad.minimize(printTrainigCost=True, printUpdateRate=False,
-#                           dumpParameters="paramsCNN_" + str(index) + ".pkl")
-pickleFilename = "paramsRNN_" + str(index) + ".pkl"
-with open(pickleFilename, "rb") as fp:
-    params = pickle.load(fp)
+params = adaGrad.minimize(printTrainigCost=True, printUpdateRate=False,
+                          dumpParameters="paramsCNN_" + str(index) + ".pkl")
+# pickleFilename = "paramsRNN_" + str(index) + ".pkl"
+# with open(pickleFilename, "rb") as fp:
+#     params = pickle.load(fp)
 
 mainGraph.attachParameters(params)
 
@@ -108,9 +86,9 @@ def sampleCharacter(previousX, previousH,
 
 
 nextH = hactivations[0].getValue().copy()
-nextX = x[0, 0]
-# nextX = np.zeros_like(x[0,0])
-# nextX[int(np.random.random() * vocabSize)] = 1
+# nextX = x[0]
+nextX = np.zeros_like(x[0])
+nextX[int(np.random.random() * nFeatures)] = 1
 
 print(array2char(nextX))
 length = 45
@@ -120,3 +98,22 @@ for index in range(length):
     pred[np.random.choice(nextX.size, p=nextX[0])] = 1
     print(array2char(pred))
     # print(array2char(nextX), array2char(x[0, index + 1]))
+
+
+# def f(p, costOperationsList=costOperationsList, mainGraph=mainGraph):
+#     data = x
+#     labels = y
+#     mainGraph.feederOperation.assignData(data)
+#     mainGraph.resetAll()
+#     for index, cop in enumerate(costOperationsList):
+#         cop.assignLabels(labels[:, index, :])
+#     mainGraph.attachParameters(p)
+
+#     mainGraph.resetAll()
+#     c = mainGraph.feedForward()
+
+#     # global progress
+#     # progress += 1
+#     # if not (progress % 10):
+#     #     print("Progress:", progress, "Out of:", paramLen)
+#     return c
