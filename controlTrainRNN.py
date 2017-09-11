@@ -1,6 +1,7 @@
 import graphAttack as ga
 import numpy as np
 import pickle
+import sys
 """Control script"""
 
 
@@ -9,7 +10,8 @@ with open(pickleFilename, "rb") as fp:
     x, index_to_word, word_to_index = pickle.load(fp)
 
 seriesLength, nFeatures = x.shape
-nExamples = 100
+nExamples = int(sys.argv[1])
+
 exampleLength = 32
 dummyX = np.zeros((nExamples, exampleLength, nFeatures))
 
