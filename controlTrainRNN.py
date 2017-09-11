@@ -4,15 +4,18 @@ import pickle
 import sys
 """Control script"""
 
+simulationIndex = 0
+simulationIndex = int(sys.argv[1])
+
 
 pickleFilename = "dataSet/trump_campaign.pkl"
 with open(pickleFilename, "rb") as fp:
     x, index_to_word, word_to_index = pickle.load(fp)
 
 seriesLength, nFeatures = x.shape
-nExamples = int(sys.argv[1])
+nExamples = simulationIndex
 
-exampleLength = 32
+exampleLength = 20
 dummyX = np.zeros((nExamples, exampleLength, nFeatures))
 
 mainGraph = ga.Graph(False)
@@ -41,7 +44,6 @@ def fprime(p, data, labels, costOperationsList=costOperationsList, mainGraph=mai
     return c, g
 
 
-index = 0
 param0 = mainGraph.unrollGradientParameters()
 adaGrad = ga.adaptiveSGDrecurrent(trainingData=x,
                                   param0=param0,
@@ -56,8 +58,8 @@ adaGrad = ga.adaptiveSGDrecurrent(trainingData=x,
                                   function=fprime)
 
 params = adaGrad.minimize(printTrainigCost=True, printUpdateRate=False,
-                          dumpParameters="paramsRNN_" + str(index) + ".pkl")
-# pickleFilename = "paramsRNN_" + str(index) + ".pkl"
+                          dumpParameters="paramsRNN_" + str(simulationIndex) + ".pkl")
+# pickleFilename = "paramsRNN_" + str(simulationIndex) + ".pkl"
 # with open(pickleFilename, "rb") as fp:
 #     params = pickle.load(fp)
 
