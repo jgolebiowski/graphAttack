@@ -11,7 +11,7 @@ testing/*
 *\.log
 
 #Do not add workspace
-workspace.py
+workspace*
 
 ###########################################################
 # Below standard .gitignore for python

@@ -54,7 +54,7 @@ adaGrad = ga.adaptiveSGDrecurrent(trainingData=x,
                                   function=fprime)
 
 params = adaGrad.minimize(printTrainigCost=True, printUpdateRate=False,
-                          dumpParameters="paramsCNN_" + str(index) + ".pkl")
+                          dumpParameters="paramsRNN_" + str(index) + ".pkl")
 # pickleFilename = "paramsRNN_" + str(index) + ".pkl"
 # with open(pickleFilename, "rb") as fp:
 #     params = pickle.load(fp)
