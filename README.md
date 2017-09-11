@@ -8,20 +8,20 @@ the gradient of all the inputs to ease up setting up the
 minimizer.
 
 ### Tutorial
- - To be found in tutorial.ipynb, covers basic usage and a simple linear regression model
+ - To be found in [tutorial.ipynb], covers basic usage and a simple linear regression model
 
 ### Examples
 Setting up and training a dense neural network model
- - controlDense.py
- - controlTrainDense.py
+ - [controlDense.py]
+ - [controlTrainDense.py]
 
 Setting up and running a Convolution neural network model
- - controlCNN.py
- - controlTrainCNN.py
+ - [controlCNN.py]
+ - [controlTrainCNN.py]
 
 Setting up and running a Recurrent neural network
- - controlRNN.py
- - controlTrainRNN.py
+ - [controlRNN.py]
+ - [controlTrainRNN.py]
 
 ## Additional Resources
 
@@ -50,4 +50,10 @@ MIT
    [numpy]: <http://www.numpy.org/>
    [python]: <https://www.python.org/>
    [scipy]: <https://www.scipy.org/index.html>
-   
+   [controlCNN.py]: <https://github.com/jgolebiowski/graphAttack/blob/master/controlCNN.py>
+   [controlDense.py]: <https://github.com/jgolebiowski/graphAttack/blob/master/controlDense.py>
+   [controlRNN.py]: <https://github.com/jgolebiowski/graphAttack/blob/master/controlRNN.py>
+   [controlTrainCNN.py]: <https://github.com/jgolebiowski/graphAttack/blob/master/controlTrainCNN.py>
+   [controlTrainRNN.py]: <https://github.com/jgolebiowski/graphAttack/blob/master/controlTrainRNN.py>
+   [controlTrainDense.py]: <https://github.com/jgolebiowski/graphAttack/blob/master/controlTrainDense.py>
+   [tutorial.ipynb]: <https://github.com/jgolebiowski/graphAttack/blob/master/tutorial.ipynb>
