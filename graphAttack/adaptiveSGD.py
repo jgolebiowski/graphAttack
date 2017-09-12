@@ -180,15 +180,15 @@ class adaptiveSGD(object):
 
 class adaptiveSGDrecurrent(adaptiveSGD):
     """Class that holds most of the funtionalities of the
-    adaptive SGD, for applications to time series
-    currently using the ADAM algorightm
+    adaptive SGD, for applications to time series.
+    Currently uses the ADAM algorightm
 
 
     Attributes
     ----------
 
     trainDataset : np.array
-        time series data in the format of (nDataPoints, exampleFeatures, exampleFeatures, ...)
+        time series data in the format of (nDataPoints, exampleFeatures1, exampleFeatures2, ...)
     param0 : np.array
         Initial parameters
     epochs : int

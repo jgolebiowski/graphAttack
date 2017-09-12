@@ -11,15 +11,15 @@ minimizer.
  - To be found in [tutorial.ipynb], covers basic usage and a simple linear regression model
 
 ### Examples
-Setting up and training a dense neural network model
+Setting up and running / training a dense neural network model
  - [controlDense.py]
  - [controlTrainDense.py]
 
-Setting up and running a Convolution neural network model
+Setting up and running / training a Convolution neural network model
  - [controlCNN.py]
  - [controlTrainCNN.py]
 
-Setting up and running a Recurrent neural network
+Setting up and running / training a Recurrent neural network
  - [controlRNN.py]
  - [controlTrainRNN.py]
 
