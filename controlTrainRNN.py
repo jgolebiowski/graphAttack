@@ -4,7 +4,7 @@ import pickle
 import sys
 """Control script"""
 simulationIndex = 0
-# simulationIndex = int(sys.argv[1])
+simulationIndex = int(sys.argv[1])
 
 
 pickleFilename = "dataSet/trump_campaign.pkl"
