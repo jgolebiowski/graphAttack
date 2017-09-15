@@ -15,7 +15,7 @@ with open(pickleFilename, "rb") as fp:
 seriesLength, nFeatures = x.shape
 nExamples = simulationIndex
 exampleLength = 20
-nHidden = 80
+nHidden = 100
 nHidden2 = 100
 
 # nExamples = 2
@@ -60,7 +60,6 @@ def fprime(p, data, labels, costOperationsList=costOperationsList, mainGraph=mai
 
 param0 = mainGraph.unrollGradientParameters()
 print("Number of parameters to train:", len(param0))
-1/0
 adaGrad = ga.adaptiveSGDrecurrent(trainingData=x,
                                   param0=param0,
                                   epochs=1e3,
