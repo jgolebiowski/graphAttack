@@ -18,5 +18,6 @@ from .operations.convolutionOperation import *
 
 from .gaUtilities.misc import *
 from .gaUtilities.neuralNetwork import *
+from .gaUtilities.recurrentNeuralNetwork import *
 
 from .adaptiveSGD import adaptiveSGD, adaptiveSGDrecurrent

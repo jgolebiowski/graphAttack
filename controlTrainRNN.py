@@ -3,33 +3,47 @@ import numpy as np
 import pickle
 import sys
 """Control script"""
-
 simulationIndex = 0
-simulationIndex = int(sys.argv[1])
+# simulationIndex = int(sys.argv[1])
 
 
-pickleFilename = "dataSet/trump_campaign.pkl"
+# pickleFilename = "dataSet/trump_campaign.pkl"
+pickleFilename = "dataSet/singleSentence.pkl"
 with open(pickleFilename, "rb") as fp:
     x, index_to_word, word_to_index = pickle.load(fp)
 
 seriesLength, nFeatures = x.shape
-nExamples = simulationIndex
+# nExamples = simulationIndex
+# exampleLength = 20
+# nHidden = 80
+# nHidden2 = 100
 
-exampleLength = 20
-dummyX = np.zeros((nExamples, exampleLength, nFeatures))
+nExamples = 2
+exampleLength = 15
+nHidden = 35
+nHidden2 = 40
 
 mainGraph = ga.Graph(False)
+dummyX = np.zeros((nExamples, exampleLength, nFeatures))
 feed = mainGraph.addOperation(ga.Variable(dummyX), feederOperation=True)
 
-finalCost,\
-    hactivations,\
-    costOperationsList = ga.addRNNnetwork(mainGraph,
-                                          inputOperation=feed,
-                                          activation=ga.TanhActivation,
-                                          costActivation=ga.SoftmaxActivation,
-                                          costOperation=ga.CrossEntropyCostSoftmax,
-                                          nHidden=100,
-                                          labels=None)
+hactivations0 = ga.addInitialRNNLayer(mainGraph,
+                                      inputOperation=feed,
+                                      activation=ga.TanhActivation,
+                                      nHidden=nHidden)
+
+hactivations = ga.appendRNNLayer(mainGraph,
+                                 previousActivations=hactivations0,
+                                 activation=ga.TanhActivation,
+                                 nHidden=nHidden2)
+
+finalCost, costOperationsList = ga.addRNNCost(mainGraph,
+                                              hactivations,
+                                              costActivation=ga.SoftmaxActivation,
+                                              costOperation=ga.CrossEntropyCostSoftmax,
+                                              nHidden=nHidden2,
+                                              labelsShape=feed.shape,
+                                              labels=None)
 
 
 def fprime(p, data, labels, costOperationsList=costOperationsList, mainGraph=mainGraph):
@@ -45,6 +59,7 @@ def fprime(p, data, labels, costOperationsList=costOperationsList, mainGraph=mai
 
 
 param0 = mainGraph.unrollGradientParameters()
+print("Number of parameters to train:", len(param0))
 adaGrad = ga.adaptiveSGDrecurrent(trainingData=x,
                                   param0=param0,
                                   epochs=1e3,
@@ -54,7 +69,7 @@ adaGrad = ga.adaptiveSGDrecurrent(trainingData=x,
                                   beta1=0.9,
                                   beta2=0.999,
                                   epsilon=1e-8,
-                                  testFrequency=1e3,
+                                  testFrequency=1e2,
                                   function=fprime)
 
 params = adaGrad.minimize(printTrainigCost=True, printUpdateRate=False,
@@ -70,10 +85,10 @@ def array2char(array):
     return index_to_word[np.argmax(array)]
 
 
-def sampleCharacter(previousX, previousH,
-                    hactivations=hactivations,
-                    costOperationsList=costOperationsList,
-                    mainGraph=mainGraph):
+def sampleSingle(previousX, previousH,
+                 hactivations=hactivations,
+                 costOperationsList=costOperationsList,
+                 mainGraph=mainGraph):
     N, T, D = mainGraph.feederOperation.shape
     preiousData = np.zeros((1, T, D))
     preiousData[:, 0, :] = previousX
@@ -89,35 +104,21 @@ def sampleCharacter(previousX, previousH,
     return newX, newH
 
 
-nextH = hactivations[0].getValue().copy()
-# nextX = x[0]
-nextX = np.zeros_like(x[0])
-nextX[int(np.random.random() * nFeatures)] = 1
+def sampleMany(n, hactivations=hactivations,
+               costOperationsList=costOperationsList,
+               mainGraph=mainGraph):
+    string = ""
+    nextH = np.zeros_like(hactivations[0].getValue())
+    nextX = np.zeros_like(x[0])
+    nextX[int(np.random.random() * nFeatures)] = 1
 
-print(array2char(nextX))
-length = 45
-for index in range(length):
-    nextX, nextH = sampleCharacter(nextX, nextH)
-    pred = np.zeros(nextX.size)
-    pred[np.random.choice(nextX.size, p=nextX[0])] = 1
-    print(array2char(pred))
-    # print(array2char(nextX), array2char(x[0, index + 1]))
+    for index in range(n):
+        nextX, nextH = sampleSingle(nextX, nextH)
+        idx = np.random.choice(nextX.size, p=nextX[0])
+        nextX[:] = 0
+        nextX[0, idx] = 1
+        string += array2char(nextX) + " "
+    return string
 
 
-# def f(p, costOperationsList=costOperationsList, mainGraph=mainGraph):
-#     data = x
-#     labels = y
-#     mainGraph.feederOperation.assignData(data)
-#     mainGraph.resetAll()
-#     for index, cop in enumerate(costOperationsList):
-#         cop.assignLabels(labels[:, index, :])
-#     mainGraph.attachParameters(p)
-
-#     mainGraph.resetAll()
-#     c = mainGraph.feedForward()
-
-#     # global progress
-#     # progress += 1
-#     # if not (progress % 10):
-#     #     print("Progress:", progress, "Out of:", paramLen)
-#     return c
+print(sampleMany(100))

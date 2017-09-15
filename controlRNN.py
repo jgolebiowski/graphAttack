@@ -13,15 +13,23 @@ mainGraph = ga.Graph(False)
 xop = mainGraph.addOperation(ga.Variable(x), feederOperation=True)
 
 
-finalCost,\
-    hactivations,\
-    costOperationsList = ga.addRNNnetwork(mainGraph,
-                                          inputOperation=xop,
-                                          activation=ga.TanhActivation,
-                                          costActivation=ga.SoftmaxActivation,
-                                          costOperation=ga.CrossEntropyCostSoftmax,
-                                          nHidden=5,
-                                          labels=None)
+hactivations0 = ga.addInitialRNNLayer(mainGraph,
+                                      inputOperation=xop,
+                                      activation=ga.TanhActivation,
+                                      nHidden=5)
+
+hactivations = ga.appendRNNLayer(mainGraph,
+                                 previousActivations=hactivations0,
+                                 activation=ga.TanhActivation,
+                                 nHidden=5)
+
+finalCost, costOperationsList = ga.addRNNCost(mainGraph,
+                                              hactivations,
+                                              costActivation=ga.SoftmaxActivation,
+                                              costOperation=ga.CrossEntropyCostSoftmax,
+                                              nHidden=5,
+                                              labelsShape=xop.shape,
+                                              labels=None)
 
 
 def f(p, costOperationsList=costOperationsList, mainGraph=mainGraph):
