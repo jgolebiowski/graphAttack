@@ -18,21 +18,22 @@ exampleLength = 20
 nHidden = 100
 nHidden2 = 100
 
+# seriesLength, nFeatures = x.shape
 # nExamples = 2
 # exampleLength = 15
-# nHidden = 30
-# nHidden2 = 60
+# nHidden = 20
+# nHidden2 = 30
 
 mainGraph = ga.Graph(False)
 dummyX = np.zeros((nExamples, exampleLength, nFeatures))
 feed = mainGraph.addOperation(ga.Variable(dummyX), feederOperation=True)
 
-hactivations0 = ga.addInitialRNNLayer(mainGraph,
+hactivations = ga.addInitialLSTMLayer(mainGraph,
                                       inputOperation=feed,
                                       nHidden=nHidden2)
-hactivations = ga.appendLSTMLayer(mainGraph,
-                                  previousActivations=hactivations0,
-                                  nHidden=nHidden2)
+# hactivations = ga.appendLSTMLayer(mainGraph,
+#                                   previousActivations=hactivations0,
+#                                   nHidden=nHidden2)
 
 # hactivations0 = ga.addInitialRNNLayer(mainGraph,
 #                                       inputOperation=feed,
