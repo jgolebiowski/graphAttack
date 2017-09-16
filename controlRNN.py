@@ -12,16 +12,23 @@ testLabels = np.random.random((N, T, D))
 mainGraph = ga.Graph(False)
 xop = mainGraph.addOperation(ga.Variable(x), feederOperation=True)
 
-
 hactivations0 = ga.addInitialRNNLayer(mainGraph,
                                       inputOperation=xop,
-                                      activation=ga.TanhActivation,
                                       nHidden=5)
+hactivations = ga.appendLSTMLayer(mainGraph,
+                                  previousActivations=hactivations0,
+                                  nHidden=5)
 
-hactivations = ga.appendRNNLayer(mainGraph,
-                                 previousActivations=hactivations0,
-                                 activation=ga.TanhActivation,
-                                 nHidden=5)
+
+# hactivations0 = ga.addInitialRNNLayer(mainGraph,
+#                                       inputOperation=xop,
+#                                       activation=ga.TanhActivation,
+#                                       nHidden=5)
+
+# hactivations = ga.appendRNNLayer(mainGraph,
+#                                  previousActivations=hactivations0,
+#                                  activation=ga.TanhActivation,
+#                                  nHidden=5)
 
 finalCost, costOperationsList = ga.addRNNCost(mainGraph,
                                               hactivations,
@@ -80,6 +87,7 @@ params = mainGraph.unrollGradientParameters()
 
 numGrad = scipy.optimize.approx_fprime(params, f, 1e-8)
 analCostGraph, analGradientGraph = fprime(params, x, testLabels)
-print(analGradientGraph, analCostGraph)
-print(analGradientGraph - numGrad)
+# print(analGradientGraph, analCostGraph)
+# print(analGradientGraph - numGrad)
+print(analCostGraph)
 print(np.sum(np.abs(analGradientGraph - numGrad)), np.sum(np.abs(analGradientGraph)))

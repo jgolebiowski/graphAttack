@@ -4,38 +4,44 @@ import pickle
 import sys
 """Control script"""
 simulationIndex = 0
-simulationIndex = int(sys.argv[1])
+# simulationIndex = int(sys.argv[1])
 
 
-pickleFilename = "dataSet/trump_campaign.pkl"
-# pickleFilename = "dataSet/singleSentence.pkl"
+# pickleFilename = "dataSet/trump_campaign.pkl"
+pickleFilename = "dataSet/singleSentence.pkl"
 with open(pickleFilename, "rb") as fp:
     x, index_to_word, word_to_index = pickle.load(fp)
 
 seriesLength, nFeatures = x.shape
-nExamples = simulationIndex
-exampleLength = 20
-nHidden = 100
-nHidden2 = 100
+# nExamples = simulationIndex
+# exampleLength = 20
+# nHidden = 100
+# nHidden2 = 100
 
-# nExamples = 2
-# exampleLength = 15
-# nHidden = 35
-# nHidden2 = 40
+nExamples = 2
+exampleLength = 15
+nHidden = 30
+nHidden2 = 60
 
 mainGraph = ga.Graph(False)
 dummyX = np.zeros((nExamples, exampleLength, nFeatures))
 feed = mainGraph.addOperation(ga.Variable(dummyX), feederOperation=True)
 
-hactivations0 = ga.addInitialRNNLayer(mainGraph,
-                                      inputOperation=feed,
-                                      activation=ga.TanhActivation,
-                                      nHidden=nHidden)
+hactivations = ga.addInitialRNNLayer(mainGraph,
+                                     inputOperation=feed,
+                                     nHidden=nHidden2)
+# hactivations = ga.appendLSTMLayer(mainGraph,
+#                                   previousActivations=hactivations0,
+#                                   nHidden=nHidden2)
 
-hactivations = ga.appendRNNLayer(mainGraph,
-                                 previousActivations=hactivations0,
-                                 activation=ga.TanhActivation,
-                                 nHidden=nHidden2)
+# hactivations0 = ga.addInitialRNNLayer(mainGraph,
+#                                       inputOperation=feed,
+#                                       activation=ga.TanhActivation,
+#                                       nHidden=nHidden)
+# hactivations = ga.appendRNNLayer(mainGraph,
+#                                  previousActivations=hactivations0,
+#                                  activation=ga.TanhActivation,
+#                                  nHidden=nHidden2)
 
 finalCost, costOperationsList = ga.addRNNCost(mainGraph,
                                               hactivations,
@@ -98,7 +104,6 @@ def sampleSingle(previousX, previousH,
     hactivations[0].assignData(previousH)
 
     newH = hactivations[1].getValue()
-    # newX = costOperationsList[0].makePredictions()
     newX = costOperationsList[0].inputA.getValue()
 
     return newX, newH
@@ -108,13 +113,12 @@ def sampleMany(n, hactivations=hactivations,
                costOperationsList=costOperationsList,
                mainGraph=mainGraph):
     string = ""
-    nextH = np.zeros_like(hactivations[0].getValue())
-    nextX = np.zeros_like(x[0])
-    nextX[int(np.random.random() * nFeatures)] = 1
-
+    nextH = np.zeros((1, hactivations[0].getValue()[0].size))
+    nextX = np.zeros((1, x[0].size))
+    nextX[0, int(np.random.random() * nFeatures)] = 1
     for index in range(n):
         nextX, nextH = sampleSingle(nextX, nextH)
-        idx = np.random.choice(nextX.size, p=nextX[0])
+        idx = np.random.choice(nextX[0].size, p=nextX[0])
         nextX[:] = 0
         nextX[0, idx] = 1
         string += array2char(nextX) + " "

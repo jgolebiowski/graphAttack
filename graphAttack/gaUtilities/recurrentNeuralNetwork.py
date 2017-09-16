@@ -40,7 +40,7 @@ def addInitialRNNLayer(mainGraph,
 
     nExamples, seriesLength, nFeatures = inputOperation.shape
 
-    h0 = generateZeroVariable(shape=(1, nHidden),
+    h0 = generateZeroVariable(shape=(nExamples, nHidden),
                               transpose=False)
     W = generateRandomVariable(shape=(nFeatures, nHidden),
                                transpose=False, nInputs=nFeatures)
@@ -94,17 +94,12 @@ def appendRNNLayer(mainGraph,
     -------
     list(ga.Operation)
         List of activation operations from the RNN layer
-
-    Raises
-    ------
-    ValueError
-        "Labels must be in a compatible shape (nExamples, seriesLength, nHidden)"
     """
 
     nExamples, nFeatures = previousActivations[1].shape
     seriesLength = len(previousActivations) - 1
 
-    h0 = generateZeroVariable(shape=(1, nHidden),
+    h0 = generateZeroVariable(shape=(nExamples, nHidden),
                               transpose=False)
     W = generateRandomVariable(shape=(nFeatures, nHidden),
                                transpose=False, nInputs=nFeatures)
@@ -153,11 +148,11 @@ def createRNNgate(mainGraph,
     hActiv : ga.operation
         operation holding last gate's activations
     Wop : ga.Variable
-        Variable holding weigths W (W @ x)
+        Variable holding weigths W (x @ W)
     Uop : ga.Variable
-        Variable holding weigths U (U @ h)
+        Variable holding weigths U (h @ U)
     Bop : ga.Variable
-        Variable holding biases B (W @ x + U @ h + B)
+        Variable holding biases B (x @ W + h @ U + B)
     activation : ga.SingleInputOperation [class]
         activatin operation for hidden units
 
