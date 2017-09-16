@@ -16,7 +16,7 @@ seriesLength, nFeatures = x.shape
 nExamples = 100
 exampleLength = 20
 nHidden = 100
-nHidden2 = 100
+nHidden2 = 70
 
 # seriesLength, nFeatures = x.shape
 # nExamples = 2
