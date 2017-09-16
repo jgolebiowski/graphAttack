@@ -7,32 +7,32 @@ simulationIndex = 0
 # simulationIndex = int(sys.argv[1])
 
 
-# pickleFilename = "dataSet/trump_campaign.pkl"
-pickleFilename = "dataSet/singleSentence.pkl"
+pickleFilename = "dataSet/trump_campaign.pkl"
+# pickleFilename = "dataSet/singleSentence.pkl"
 with open(pickleFilename, "rb") as fp:
     x, index_to_word, word_to_index = pickle.load(fp)
 
 seriesLength, nFeatures = x.shape
-# nExamples = simulationIndex
-# exampleLength = 20
-# nHidden = 100
-# nHidden2 = 100
+nExamples = 100
+exampleLength = 20
+nHidden = 100
+nHidden2 = 100
 
-nExamples = 2
-exampleLength = 15
-nHidden = 30
-nHidden2 = 60
+# nExamples = 2
+# exampleLength = 15
+# nHidden = 30
+# nHidden2 = 60
 
 mainGraph = ga.Graph(False)
 dummyX = np.zeros((nExamples, exampleLength, nFeatures))
 feed = mainGraph.addOperation(ga.Variable(dummyX), feederOperation=True)
 
-hactivations = ga.addInitialRNNLayer(mainGraph,
-                                     inputOperation=feed,
-                                     nHidden=nHidden2)
-# hactivations = ga.appendLSTMLayer(mainGraph,
-#                                   previousActivations=hactivations0,
-#                                   nHidden=nHidden2)
+hactivations0 = ga.addInitialRNNLayer(mainGraph,
+                                      inputOperation=feed,
+                                      nHidden=nHidden2)
+hactivations = ga.appendLSTMLayer(mainGraph,
+                                  previousActivations=hactivations0,
+                                  nHidden=nHidden2)
 
 # hactivations0 = ga.addInitialRNNLayer(mainGraph,
 #                                       inputOperation=feed,
