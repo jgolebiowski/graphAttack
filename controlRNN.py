@@ -12,12 +12,12 @@ testLabels = np.random.random((N, T, D))
 mainGraph = ga.Graph(False)
 xop = mainGraph.addOperation(ga.Variable(x), feederOperation=True)
 
-hactivations0 = ga.addInitialRNNLayer(mainGraph,
-                                      inputOperation=xop,
-                                      nHidden=5)
-hactivations = ga.appendLSTMLayer(mainGraph,
-                                  previousActivations=hactivations0,
-                                  nHidden=5)
+hactivations0, cStates0 = ga.addInitialLSTMLayer(mainGraph,
+                                                 inputOperation=xop,
+                                                 nHidden=5)
+hactivations1, cStates1 = ga.appendLSTMLayer(mainGraph,
+                                             previousActivations=hactivations0,
+                                             nHidden=4)
 
 
 # hactivations0 = ga.addInitialRNNLayer(mainGraph,
@@ -25,16 +25,16 @@ hactivations = ga.appendLSTMLayer(mainGraph,
 #                                       activation=ga.TanhActivation,
 #                                       nHidden=5)
 
-# hactivations = ga.appendRNNLayer(mainGraph,
+# hactivations1 = ga.appendRNNLayer(mainGraph,
 #                                  previousActivations=hactivations0,
 #                                  activation=ga.TanhActivation,
 #                                  nHidden=5)
 
 finalCost, costOperationsList = ga.addRNNCost(mainGraph,
-                                              hactivations,
+                                              hactivations1,
                                               costActivation=ga.SoftmaxActivation,
                                               costOperation=ga.CrossEntropyCostSoftmax,
-                                              nHidden=5,
+                                              nHidden=4,
                                               labelsShape=xop.shape,
                                               labels=None)
 
@@ -61,25 +61,6 @@ def fprime(p, data, labels, costOperationsList=costOperationsList, mainGraph=mai
     mainGraph.feedBackward()
     g = mainGraph.unrollGradients()
     return c, g
-
-
-def sampleCharacter(previousX, previousH,
-                    hactivations=hactivations,
-                    costOperationsList=costOperationsList,
-                    mainGraph=mainGraph):
-    N, T, D = mainGraph.feederOperation.shape
-    preiousData = np.zeros((1, T, D))
-    preiousData[:, 0, :] = previousX
-
-    mainGraph.resetAll()
-    mainGraph.feederOperation.assignData(preiousData)
-    hactivations[0].assignData(previousH)
-
-    newH = hactivations[1].getValue()
-    # newX = costOperationsList[0].makePredictions()
-    newX = costOperationsList[0].inputA.getValue()
-
-    return newX, newH
 
 
 import scipy.optimize

@@ -20,5 +20,6 @@ from .gaUtilities.misc import *
 from .gaUtilities.neuralNetwork import *
 from .gaUtilities.recurrentNeuralNetwork import *
 from .gaUtilities.lstmNeuralNetwork import *
+from .gaUtilities.sampleRNN import *
 
 from .adaptiveSGD import adaptiveSGD, adaptiveSGDrecurrent

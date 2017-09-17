@@ -32,7 +32,9 @@ def addInitialLSTMLayer(mainGraph,
     Returns
     -------
     list(ga.Operation)
-        List of activation operations from the RNN layer
+        List of activation operations from the LSTM layer
+    list(ga.Operation)
+        List of internal state operations from the LSTM layer
     """
 
     nExamples, seriesLength, nFeatures = inputOperation.shape
@@ -106,9 +108,10 @@ def addInitialLSTMLayer(mainGraph,
     Bgop = mainGraph.addOperation(Bg, doGradient=True)
 
     h0op = mainGraph.addOperation(h0)
-    newC = mainGraph.addOperation(c0)
+    c0op = mainGraph.addOperation(c0)
 
     hactivations = [h0op]
+    cStates = [c0op]
 
     # ------ append activation gates
     for indexRNN in range(seriesLength):
@@ -117,13 +120,14 @@ def addInitialLSTMLayer(mainGraph,
         newHActiv, newC = createLSTMgate(mainGraph,
                                          xSliceop,
                                          hactivations[-1],
-                                         newC,
+                                         cStates[-1],
                                          Wiop, Wfop, Woop, Wgop,
                                          Uiop, Ufop, Uoop, Ugop,
                                          Biop, Bfop, Boop, Bgop)
         hactivations.append(newHActiv)
+        cStates.append(newC)
 
-    return hactivations
+    return hactivations, cStates
 
 
 def appendLSTMLayer(mainGraph,
@@ -144,7 +148,9 @@ def appendLSTMLayer(mainGraph,
     Returns
     -------
     list(ga.Operation)
-        List of activation operations from the RNN layer
+        List of activation operations from the LSTM layer
+    list(ga.Operation)
+        List of internal state operations from the LSTM layer
     """
 
     nExamples, nFeatures = previousActivations[1].shape
@@ -196,9 +202,10 @@ def appendLSTMLayer(mainGraph,
     Bgop = mainGraph.addOperation(Bg, doGradient=True)
 
     h0op = mainGraph.addOperation(h0)
-    newC = mainGraph.addOperation(c0)
+    c0op = mainGraph.addOperation(c0)
 
     hactivations = [h0op]
+    cStates = [c0op]
 
     # ------ append activation gates
     for indexRNN in range(seriesLength):
@@ -206,13 +213,14 @@ def appendLSTMLayer(mainGraph,
         newHActiv, newC = createLSTMgate(mainGraph,
                                          xSliceop,
                                          hactivations[-1],
-                                         newC,
+                                         cStates[-1],
                                          Wiop, Wfop, Woop, Wgop,
                                          Uiop, Ufop, Uoop, Ugop,
                                          Biop, Bfop, Boop, Bgop)
         hactivations.append(newHActiv)
+        cStates.append(newC)
 
-    return hactivations
+    return hactivations, cStates
 
 
 def createLSTMgate(mainGraph,
