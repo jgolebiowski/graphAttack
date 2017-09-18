@@ -13,10 +13,10 @@ with open(pickleFilename, "rb") as fp:
     x, index_to_word, word_to_index = pickle.load(fp)
 
 seriesLength, nFeatures = x.shape
-nExamples = 20
-exampleLength = 20
+nExamples = 50
+exampleLength = 15
 nHidden0 = 100
-nHidden1 = 50
+nHidden1 = 45
 
 # seriesLength, nFeatures = x.shape
 # nExamples = 2
@@ -70,7 +70,7 @@ param0 = mainGraph.unrollGradientParameters()
 print("Number of parameters to train:", len(param0))
 adaGrad = ga.adaptiveSGDrecurrent(trainingData=x,
                                   param0=param0,
-                                  epochs=1e3,
+                                  epochs=1,
                                   miniBatchSize=nExamples,
                                   exampleLength=exampleLength,
                                   initialLearningRate=1e-3,
