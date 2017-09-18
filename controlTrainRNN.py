@@ -3,17 +3,17 @@ import numpy as np
 import pickle
 import sys
 """Control script"""
-simulationIndex = 0
-# simulationIndex = int(sys.argv[1])
+# simulationIndex = 0
+simulationIndex = int(sys.argv[1])
 
 
 pickleFilename = "dataSet/trump_campaign.pkl"
-# pickleFilename = "dataSet/singleSentence.pkl"
+pickleFilename = "dataSet/singleSentence.pkl"
 with open(pickleFilename, "rb") as fp:
     x, index_to_word, word_to_index = pickle.load(fp)
 
 seriesLength, nFeatures = x.shape
-nExamples = 20
+nExamples = simulationIndex
 exampleLength = 20
 nHidden0 = 100
 nHidden1 = 50
