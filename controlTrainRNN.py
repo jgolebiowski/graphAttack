@@ -3,20 +3,20 @@ import numpy as np
 import pickle
 import sys
 """Control script"""
-simulationIndex = 0
+# simulationIndex = 0
+simulationIndex = int(sys.argv[1])
 
-# ------ This is a very limited dataset, load a lrger one for better results
-# ------ This net is quute slow to train, be aware.
 
-pickleFilename = "dataSet/singleSentence.pkl"
+pickleFilename = "dataSet/trump_campaign.pkl"
+# pickleFilename = "dataSet/singleSentence.pkl"
 with open(pickleFilename, "rb") as fp:
     x, index_to_word, word_to_index = pickle.load(fp)
 
 seriesLength, nFeatures = x.shape
-nExamples = 2
+nExamples = simulationIndex
 exampleLength = 15
-nHidden0 = 20
-nHidden1 = 25
+nHidden0 = 100
+nHidden1 = 45
 
 mainGraph = ga.Graph(False)
 dummyX = np.zeros((nExamples, exampleLength, nFeatures))
@@ -66,14 +66,14 @@ param0 = mainGraph.unrollGradientParameters()
 print("Number of parameters to train:", len(param0))
 adaGrad = ga.adaptiveSGDrecurrent(trainingData=x,
                                   param0=param0,
-                                  epochs=5e2,
+                                  epochs=1e3,
                                   miniBatchSize=nExamples,
                                   exampleLength=exampleLength,
                                   initialLearningRate=1e-3,
                                   beta1=0.9,
                                   beta2=0.999,
                                   epsilon=1e-8,
-                                  testFrequency=1e2,
+                                  testFrequency=1e3,
                                   function=fprime)
 
 params = adaGrad.minimize(printTrainigCost=True, printUpdateRate=False,
