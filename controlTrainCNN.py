@@ -4,8 +4,9 @@ import pickle
 import sys
 """Control script"""
 
-
-pickleFilename = "dataSet/notMNIST.pickle"
+# ------ This is a very limited dataset, load a lrger one for better results
+# ------ The convolution net is quute slow to train, be aware.
+pickleFilename = "dataSet/notMNIST_small.pkl"
 with open(pickleFilename, "rb") as fp:
     allDatasets = pickle.load(fp)
 
@@ -21,8 +22,8 @@ Yvalid = allDatasets["valid_labels"]
 # index = int(sys.argv[1])
 index = 0
 print("Training with:", index)
-dropValueL = 0.125
-dropValueS = 0.067
+dropValueL = 0.1
+dropValueS = 0.05
 # ------ Build a LeNet archicture CNN
 
 mainGraph = ga.Graph()
@@ -93,13 +94,13 @@ param0 = mainGraph.unrollGradientParameters()
 adaGrad = ga.adaptiveSGD(trainingData=X,
                          trainingLabels=Y,
                          param0=param0,
-                         epochs=20,
-                         miniBatchSize=100,
+                         epochs=10,
+                         miniBatchSize=2,
                          initialLearningRate=1e-3,
                          beta1=0.9,
                          beta2=0.999,
                          epsilon=1e-8,
-                         testFrequency=1e3,
+                         testFrequency=1e2,
                          function=fprime)
 
 params = adaGrad.minimize(printTrainigCost=True, printUpdateRate=False,
@@ -120,11 +121,6 @@ with open(pickleFileName, "rb") as fp:
     mainGraph = pickle.load(fp)
 
 print("train: Trained with:", index)
-if (len(X) <= 10000):
-    print("train: Accuracy on part of the train set:",
-          ga.calculateAccuracy(mainGraph, X, Y))
-else:
-    print("train: Accuracy on part of the train set:",
-          ga.calculateAccuracy(mainGraph, X[0:10000], Y[0:10000]))
+print("train: Accuracy on the train set:", ga.calculateAccuracy(mainGraph, X, Y))
 print("train: Accuracy on cv set:", ga.calculateAccuracy(mainGraph, Xvalid, Yvalid))
 print("train: Accuracy on test set:", ga.calculateAccuracy(mainGraph, Xtest, Ytest))

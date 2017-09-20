@@ -3,14 +3,8 @@ import numpy as np
 import pickle
 """Control script"""
 
-pickleFilename = "testDataTensor.pkl"
-with open(pickleFilename, "rb") as fp:
-    X, Y = pickle.load(fp)
-
-Xt = X[0:2]
-Yt = Y[0:2]
-X = Xt
-Y = Yt
+Xt = np.random.random((5, 1, 10, 10))
+Yt = np.random.random((5, 10))
 
 # ------ conv2D operation testing
 mainGraph = ga.Graph()

@@ -3,8 +3,8 @@ import numpy as np
 import pickle
 """Control script"""
 
-
-pickleFilename = "dataSet/notMNISTreformatted.pkl"
+# ------ This is a very limited dataset, load a lrger one for better results
+pickleFilename = "dataSet/notMNISTreformatted_small.pkl"
 with open(pickleFilename, "rb") as fp:
     allDatasets = pickle.load(fp)
 
@@ -17,13 +17,6 @@ Ytest = allDatasets["testLabels"]
 Xvalid = allDatasets["validDataset"]
 Yvalid = allDatasets["validLabels"]
 
-# pickleFilename = "testData.pkl"
-# with open(pickleFilename, "rb") as fp:
-#     allDatasets = pickle.load(fp)
-
-# X = allDatasets["X"][0:1000]
-# Y = allDatasets["Y"]
-
 
 index = 0
 print(("Training with:", index))
@@ -33,7 +26,7 @@ ffeed = mainGraph.addOperation(ga.Variable(X), doGradient=False, feederOperation
 feedDrop = mainGraph.addOperation(ga.DropoutOperation(
     ffeed, 0.25), doGradient=False, finalOperation=False)
 
-l1 = ga.addDenseLayer(mainGraph, 800,
+l1 = ga.addDenseLayer(mainGraph, 100,
                       inputOperation=feedDrop,
                       activation=ga.ReLUActivation,
                       dropoutRate=0.5,
@@ -67,12 +60,12 @@ adamGrad = ga.adaptiveSGD(trainingData=X,
                           trainingLabels=Y,
                           param0=param0,
                           epochs=1e2,
-                          miniBatchSize=200,
+                          miniBatchSize=20,
                           initialLearningRate=1e-3,
                           beta1=0.9,
                           beta2=0.999,
                           epsilon=1e-8,
-                          testFrequency=1e3,
+                          testFrequency=1e2,
                           function=fprime)
 
 params = adamGrad.minimize(printTrainigCost=True, printUpdateRate=False,
