@@ -1,7 +1,6 @@
 # Do not add the dataset and stored files
 dataSet/*
-data/*
-testing/*
+archive/*
 
 # Do not add any pickle files that might be used throughtout the run
 *\.pkl

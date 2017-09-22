@@ -3,8 +3,8 @@ import numpy as np
 import pickle
 import sys
 """Control script"""
-# simulationIndex = 0
-simulationIndex = int(sys.argv[1])
+simulationIndex = 0
+# simulationIndex = int(sys.argv[1])
 
 
 pickleFilename = "dataSet/trump_campaign.pkl"
@@ -13,7 +13,7 @@ with open(pickleFilename, "rb") as fp:
     x, index_to_word, word_to_index = pickle.load(fp)
 
 seriesLength, nFeatures = x.shape
-nExamples = simulationIndex
+nExamples = 10
 exampleLength = 15
 nHidden0 = 100
 nHidden1 = 45
@@ -73,7 +73,7 @@ adaGrad = ga.adaptiveSGDrecurrent(trainingData=x,
                                   beta1=0.9,
                                   beta2=0.999,
                                   epsilon=1e-8,
-                                  testFrequency=1e3,
+                                  testFrequency=1e4,
                                   function=fprime)
 
 params = adaGrad.minimize(printTrainigCost=True, printUpdateRate=False,
