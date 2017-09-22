@@ -4,19 +4,16 @@ import pickle
 import sys
 """Control script"""
 simulationIndex = 0
-# simulationIndex = int(sys.argv[1])
 
-
-pickleFilename = "dataSet/trump_campaign.pkl"
-# pickleFilename = "dataSet/singleSentence.pkl"
+pickleFilename = "dataSet/singleSentence.pkl"
 with open(pickleFilename, "rb") as fp:
     x, index_to_word, word_to_index = pickle.load(fp)
 
 seriesLength, nFeatures = x.shape
-nExamples = 10
+nExamples = 2
 exampleLength = 15
-nHidden0 = 100
-nHidden1 = 45
+nHidden0 = 10
+nHidden1 = 25
 
 mainGraph = ga.Graph(False)
 dummyX = np.zeros((nExamples, exampleLength, nFeatures))
@@ -73,7 +70,7 @@ adaGrad = ga.adaptiveSGDrecurrent(trainingData=x,
                                   beta1=0.9,
                                   beta2=0.999,
                                   epsilon=1e-8,
-                                  testFrequency=1e4,
+                                  testFrequency=1e3,
                                   function=fprime)
 
 params = adaGrad.minimize(printTrainigCost=True, printUpdateRate=False,
