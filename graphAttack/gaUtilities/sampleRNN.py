@@ -87,6 +87,7 @@ def sampleManySingleLSTM(n, nFeatures, nHidden,
                                                      costOperationsList=costOperationsList,
                                                      mainGraph=mainGraph,
                                                      index_to_word=index_to_word)
+        # idx = np.argmax(nextX[0])
         idx = np.random.choice(nextX[0].size, p=nextX[0])
         nextX[:] = 0
         nextX[0, idx] = 1
