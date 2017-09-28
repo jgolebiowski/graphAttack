@@ -93,9 +93,9 @@ temp = ga.sampleManyLSTM(100, nFeatures, nHiddenList,
 print(temp)
 
 
-temp = ga.sampleManyRNN(100, nFeatures, nHiddenList,
-                        hactivations=hactivations,
-                        costOperationsList=costOperationsList,
-                        mainGraph=mainGraph,
-                        index_to_word=index_to_word)
-print(temp)
+# temp = ga.sampleManyRNN(100, nFeatures, nHiddenList,
+#                         hactivations=hactivations,
+#                         costOperationsList=costOperationsList,
+#                         mainGraph=mainGraph,
+#                         index_to_word=index_to_word)
+# print(temp)
