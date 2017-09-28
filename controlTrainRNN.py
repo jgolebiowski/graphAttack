@@ -13,8 +13,8 @@ with open(pickleFilename, "rb") as fp:
     x, index_to_word, word_to_index = pickle.load(fp)
 
 seriesLength, nFeatures = x.shape
-nExamples = 10
-exampleLength = 15
+nExamples = 50
+exampleLength = 25
 nHidden0 = 100
 nHidden1 = 45
 
