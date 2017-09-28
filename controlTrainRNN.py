@@ -12,7 +12,7 @@ with open(pickleFilename, "rb") as fp:
 seriesLength, nFeatures = x.shape
 nExamples = 2
 exampleLength = 15
-nHidden0 = 10
+nHidden0 = 25
 nHidden1 = 25
 
 mainGraph = ga.Graph(False)
@@ -22,21 +22,21 @@ feed = mainGraph.addOperation(ga.Variable(dummyX), feederOperation=True)
 
 # ------ Generate the network, options are RNN and LSTM gates
 # ------ Add initial layer and then possibly append more
-hactivations1, cStates1 = ga.addInitialLSTMLayer(mainGraph,
+hactivations0, cStates0 = ga.addInitialLSTMLayer(mainGraph,
                                                  inputOperation=feed,
-                                                 nHidden=nHidden1)
-# hactivations1, cStates1 = ga.appendLSTMLayer(mainGraph,
-#                                   previousActivations=hactivations0,
-#                                   nHidden=nHidden1)
+                                                 nHidden=nHidden0)
+hactivations1, cStates1 = ga.appendLSTMLayer(mainGraph,
+                                             previousActivations=hactivations0,
+                                             nHidden=nHidden1)
 
-# hactivations1 = ga.addInitialRNNLayer(mainGraph,
+# hactivations0 = ga.addInitialRNNLayer(mainGraph,
 #                                       inputOperation=feed,
 #                                       activation=ga.TanhActivation,
 #                                       nHidden=nHidden1)
-# hactivations = ga.appendRNNLayer(mainGraph,
-#                                  previousActivations=hactivations0,
-#                                  activation=ga.TanhActivation,
-#                                  nHidden=nHidden1)
+# hactivations1 = ga.appendRNNLayer(mainGraph,
+#                                   previousActivations=hactivations0,
+#                                   activation=ga.TanhActivation,
+#                                   nHidden=nHidden1)
 
 finalCost, costOperationsList = ga.addRNNCost(mainGraph,
                                               hactivations1,
@@ -81,17 +81,21 @@ params = adaGrad.minimize(printTrainigCost=True, printUpdateRate=False,
 
 mainGraph.attachParameters(params)
 
-temp = ga.sampleManySingleLSTM(100, nFeatures, nHidden1,
-                               hactivations=hactivations1,
-                               cStates=cStates1,
-                               costOperationsList=costOperationsList,
-                               mainGraph=mainGraph,
-                               index_to_word=index_to_word)
+hactivations = [hactivations0, hactivations1]
+cStates = [cStates0, cStates1]
+nHiddenList = [nHidden0, nHidden1]
+temp = ga.sampleManyLSTM(100, nFeatures, nHiddenList,
+                         hactivations=hactivations,
+                         cStates=cStates,
+                         costOperationsList=costOperationsList,
+                         mainGraph=mainGraph,
+                         index_to_word=index_to_word)
 print(temp)
 
-# temp = sampleManySingleRNN(100, nFeatures, nHidden1,
-#                            hactivations=hactivations1,
-#                            costOperationsList=costOperationsList,
-#                            mainGraph=mainGraph,
-#                            index_to_word=index_to_word)
-# print(temp)
+
+temp = ga.sampleManyRNN(100, nFeatures, nHiddenList,
+                        hactivations=hactivations,
+                        costOperationsList=costOperationsList,
+                        mainGraph=mainGraph,
+                        index_to_word=index_to_word)
+print(temp)
