@@ -4,16 +4,18 @@ import pickle
 import sys
 """Control script"""
 simulationIndex = 0
+# simulationIndex = int(sys.argv[1])
 
-pickleFilename = "dataSet/singleSentence.pkl"
+pickleFilename = "dataSet/multipleSentenceLetters.pkl"
+# pickleFilename = "dataSet/trump_campaign.pkl"
 with open(pickleFilename, "rb") as fp:
     x, index_to_word, word_to_index = pickle.load(fp)
 
 seriesLength, nFeatures = x.shape
-nExamples = 2
-exampleLength = 15
-nHidden0 = 25
-nHidden1 = 25
+nExamples = 10
+exampleLength = 25
+nHidden0 = 128
+nHidden1 = 128
 
 mainGraph = ga.Graph(False)
 dummyX = np.zeros((nExamples, exampleLength, nFeatures))
@@ -84,7 +86,7 @@ mainGraph.attachParameters(params)
 hactivations = [hactivations0, hactivations1]
 cStates = [cStates0, cStates1]
 nHiddenList = [nHidden0, nHidden1]
-temp = ga.sampleManyLSTM(100, nFeatures, nHiddenList,
+temp = ga.sampleManyLSTM(1000, nFeatures, nHiddenList,
                          hactivations=hactivations,
                          cStates=cStates,
                          costOperationsList=costOperationsList,
