@@ -6,14 +6,13 @@ import sys
 simulationIndex = 0
 # simulationIndex = int(sys.argv[1])
 
-
-pickleFilename = "dataSet/trump_campaign.pkl"
-# pickleFilename = "dataSet/singleSentence.pkl"
+pickleFilename = "dataSet/singleSentence.pkl"
+# pickleFilename = "dataSet/trump_campaign.pkl"
 with open(pickleFilename, "rb") as fp:
     x, index_to_word, word_to_index = pickle.load(fp)
 
 seriesLength, nFeatures = x.shape
-nExamples = 50
+nExamples = 4
 exampleLength = 25
 nHidden0 = 100
 nHidden1 = 45
@@ -25,21 +24,21 @@ feed = mainGraph.addOperation(ga.Variable(dummyX), feederOperation=True)
 
 # ------ Generate the network, options are RNN and LSTM gates
 # ------ Add initial layer and then possibly append more
-hactivations1, cStates1 = ga.addInitialLSTMLayer(mainGraph,
+hactivations0, cStates0 = ga.addInitialLSTMLayer(mainGraph,
                                                  inputOperation=feed,
-                                                 nHidden=nHidden1)
-# hactivations1, cStates1 = ga.appendLSTMLayer(mainGraph,
-#                                   previousActivations=hactivations0,
-#                                   nHidden=nHidden1)
+                                                 nHidden=nHidden0)
+hactivations1, cStates1 = ga.appendLSTMLayer(mainGraph,
+                                             previousActivations=hactivations0,
+                                             nHidden=nHidden1)
 
-# hactivations1 = ga.addInitialRNNLayer(mainGraph,
+# hactivations0 = ga.addInitialRNNLayer(mainGraph,
 #                                       inputOperation=feed,
 #                                       activation=ga.TanhActivation,
 #                                       nHidden=nHidden1)
-# hactivations = ga.appendRNNLayer(mainGraph,
-#                                  previousActivations=hactivations0,
-#                                  activation=ga.TanhActivation,
-#                                  nHidden=nHidden1)
+# hactivations1 = ga.appendRNNLayer(mainGraph,
+#                                   previousActivations=hactivations0,
+#                                   activation=ga.TanhActivation,
+#                                   nHidden=nHidden1)
 
 finalCost, costOperationsList = ga.addRNNCost(mainGraph,
                                               hactivations1,
@@ -73,7 +72,7 @@ adaGrad = ga.adaptiveSGDrecurrent(trainingData=x,
                                   beta1=0.9,
                                   beta2=0.999,
                                   epsilon=1e-8,
-                                  testFrequency=1e4,
+                                  testFrequency=1e3,
                                   function=fprime)
 
 params = adaGrad.minimize(printTrainigCost=True, printUpdateRate=False,
@@ -84,17 +83,21 @@ params = adaGrad.minimize(printTrainigCost=True, printUpdateRate=False,
 
 mainGraph.attachParameters(params)
 
-temp = ga.sampleManySingleLSTM(100, nFeatures, nHidden1,
-                               hactivations=hactivations1,
-                               cStates=cStates1,
-                               costOperationsList=costOperationsList,
-                               mainGraph=mainGraph,
-                               index_to_word=index_to_word)
+hactivations = [hactivations0, hactivations1]
+cStates = [cStates0, cStates1]
+nHiddenList = [nHidden0, nHidden1]
+temp = ga.sampleManyLSTM(100, nFeatures, nHiddenList,
+                         hactivations=hactivations,
+                         cStates=cStates,
+                         costOperationsList=costOperationsList,
+                         mainGraph=mainGraph,
+                         index_to_word=index_to_word)
 print(temp)
 
-# temp = sampleManySingleRNN(100, nFeatures, nHidden1,
-#                            hactivations=hactivations1,
-#                            costOperationsList=costOperationsList,
-#                            mainGraph=mainGraph,
-#                            index_to_word=index_to_word)
-# print(temp)
+
+temp = ga.sampleManyRNN(100, nFeatures, nHiddenList,
+                        hactivations=hactivations,
+                        costOperationsList=costOperationsList,
+                        mainGraph=mainGraph,
+                        index_to_word=index_to_word)
+print(temp)

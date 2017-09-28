@@ -1,11 +1,13 @@
 # graphAttack
 
-Computational graph library for machine learning
+Computational graph library for machine learning. The main point is to combine mathematical operation together to form a workflow of choice. The graph takes care of evaluating the gradient of all the inputs to ease up setting up the minimizer.
 
-The main point is to combine mathematical operation together
-to form a workflow of choice. The graph takes care of evaluating
-the gradient of all the inputs to ease up setting up the
-minimizer.
+I have aimed for the library to be simple and transparent so that it would be easy to understand and modify to fit individual needs. Performance was not the main objective as there are plenty of fast alternatives; the aim was smaller, educational models.
+
+Currently, supports most of the useful matrix operations, the Adam stochastic minimizer as well as modules for simplified deployment of dense, convolution and recurrent (vanilla and LSTM) networks.
+
+All feedback and ideas for improvement welcome.
+
 
 ### Tutorial
  - To be found in [tutorial.ipynb], covers basic usage and a simple linear regression model
