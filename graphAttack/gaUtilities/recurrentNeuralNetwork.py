@@ -43,11 +43,11 @@ def addInitialRNNLayer(mainGraph,
     h0 = generateZeroVariable(shape=(nExamples, nHidden),
                               transpose=False)
     W = generateRandomVariable(shape=(nFeatures, nHidden),
-                               transpose=False, nInputs=nFeatures)
+                               transpose=False, nInputs=nFeatures * seriesLength ** 3)
     U = generateRandomVariable(shape=(nHidden, nHidden),
-                               transpose=False, nInputs=nHidden)
+                               transpose=False, nInputs=nHidden * seriesLength ** 3)
     B = generateRandomVariable(shape=(1, nHidden),
-                               transpose=False, nInputs=nHidden)
+                               transpose=False, nInputs=nHidden * seriesLength ** 3)
 
     h0op = mainGraph.addOperation(h0)
     Wop = mainGraph.addOperation(W, doGradient=True)
@@ -102,11 +102,11 @@ def appendRNNLayer(mainGraph,
     h0 = generateZeroVariable(shape=(nExamples, nHidden),
                               transpose=False)
     W = generateRandomVariable(shape=(nFeatures, nHidden),
-                               transpose=False, nInputs=nFeatures)
+                               transpose=False, nInputs=nFeatures * seriesLength ** 3)
     U = generateRandomVariable(shape=(nHidden, nHidden),
-                               transpose=False, nInputs=nHidden)
+                               transpose=False, nInputs=nHidden * seriesLength ** 3)
     B = generateRandomVariable(shape=(1, nHidden),
-                               transpose=False, nInputs=nHidden)
+                               transpose=False, nInputs=nHidden * seriesLength ** 3)
 
     h0op = mainGraph.addOperation(h0)
     Wop = mainGraph.addOperation(W, doGradient=True)
@@ -219,9 +219,9 @@ def addRNNCost(mainGraph,
         labels = np.zeros((nExamples, seriesLength, nOutputFeatures))
 
     wH = generateRandomVariable(shape=(nHidden, nOutputFeatures),
-                                transpose=False, nInputs=nHidden)
+                                transpose=False, nInputs=nHidden * seriesLength ** 3)
     bH = generateRandomVariable(shape=(1, nOutputFeatures),
-                                transpose=False, nInputs=nHidden)
+                                transpose=False, nInputs=nHidden * seriesLength ** 3)
 
     Whop = mainGraph.addOperation(wH, doGradient=True)
     Bhop = mainGraph.addOperation(bH, doGradient=True)

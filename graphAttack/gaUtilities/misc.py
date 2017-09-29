@@ -6,7 +6,7 @@ from ..coreDataContainers import Variable
 
 def generateRandomVariable(shape, transpose=False, nInputs=None):
     """Generate a ga.Variable of a given shape filled with random values
-    from a Gaussian distribution with mean 0 and standard deviation 1
+    from a Gaussian distribution with mean 0.
     If the transpose flag is set, generate a Variable that is the transpose of a
     given shape
 
@@ -25,7 +25,7 @@ def generateRandomVariable(shape, transpose=False, nInputs=None):
         generated random variable
     """
 
-    reduction = 0.5 * np.sqrt(nInputs)
+    reduction = 2 * np.sqrt(nInputs)
     # print("Initiazing with reduction", reduction, "and shape", shape)
 
     X = np.random.random(shape) / reduction

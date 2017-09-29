@@ -44,31 +44,31 @@ def addInitialLSTMLayer(mainGraph,
                               transpose=False)
 
     Wi = generateRandomVariable(shape=(nFeatures, nHidden),
-                                transpose=False, nInputs=nFeatures)
+                                transpose=False, nInputs=nFeatures * seriesLength ** 3)
     Wf = generateRandomVariable(shape=(nFeatures, nHidden),
-                                transpose=False, nInputs=nFeatures)
+                                transpose=False, nInputs=nFeatures * seriesLength ** 3)
     Wo = generateRandomVariable(shape=(nFeatures, nHidden),
-                                transpose=False, nInputs=nFeatures)
+                                transpose=False, nInputs=nFeatures * seriesLength ** 3)
     Wg = generateRandomVariable(shape=(nFeatures, nHidden),
-                                transpose=False, nInputs=nFeatures)
+                                transpose=False, nInputs=nFeatures * seriesLength ** 3)
 
     Ui = generateRandomVariable(shape=(nHidden, nHidden),
-                                transpose=False, nInputs=nHidden)
+                                transpose=False, nInputs=nHidden * seriesLength ** 3)
     Uf = generateRandomVariable(shape=(nHidden, nHidden),
-                                transpose=False, nInputs=nHidden)
+                                transpose=False, nInputs=nHidden * seriesLength ** 3)
     Uo = generateRandomVariable(shape=(nHidden, nHidden),
-                                transpose=False, nInputs=nHidden)
+                                transpose=False, nInputs=nHidden * seriesLength ** 3)
     Ug = generateRandomVariable(shape=(nHidden, nHidden),
-                                transpose=False, nInputs=nHidden)
+                                transpose=False, nInputs=nHidden * seriesLength ** 3)
 
     Bi = generateRandomVariable(shape=(1, nHidden),
-                                transpose=False, nInputs=nHidden)
+                                transpose=False, nInputs=nHidden * seriesLength ** 3)
     Bf = generateRandomVariable(shape=(1, nHidden),
-                                transpose=False, nInputs=nHidden)
+                                transpose=False, nInputs=nHidden * seriesLength ** 3)
     Bo = generateRandomVariable(shape=(1, nHidden),
-                                transpose=False, nInputs=nHidden)
+                                transpose=False, nInputs=nHidden * seriesLength ** 3)
     Bg = generateRandomVariable(shape=(1, nHidden),
-                                transpose=False, nInputs=nHidden)
+                                transpose=False, nInputs=nHidden * seriesLength ** 3)
 
     # N, D, H, T = 2, 5, 4, 3
     # nHidden = H
@@ -162,31 +162,31 @@ def appendLSTMLayer(mainGraph,
                               transpose=False)
 
     Wi = generateRandomVariable(shape=(nFeatures, nHidden),
-                                transpose=False, nInputs=nFeatures)
+                                transpose=False, nInputs=nFeatures * seriesLength ** 3)
     Wf = generateRandomVariable(shape=(nFeatures, nHidden),
-                                transpose=False, nInputs=nFeatures)
+                                transpose=False, nInputs=nFeatures * seriesLength ** 3)
     Wo = generateRandomVariable(shape=(nFeatures, nHidden),
-                                transpose=False, nInputs=nFeatures)
+                                transpose=False, nInputs=nFeatures * seriesLength ** 3)
     Wg = generateRandomVariable(shape=(nFeatures, nHidden),
-                                transpose=False, nInputs=nFeatures)
+                                transpose=False, nInputs=nFeatures * seriesLength ** 3)
 
     Ui = generateRandomVariable(shape=(nHidden, nHidden),
-                                transpose=False, nInputs=nHidden)
+                                transpose=False, nInputs=nHidden * seriesLength ** 3)
     Uf = generateRandomVariable(shape=(nHidden, nHidden),
-                                transpose=False, nInputs=nHidden)
+                                transpose=False, nInputs=nHidden * seriesLength ** 3)
     Uo = generateRandomVariable(shape=(nHidden, nHidden),
-                                transpose=False, nInputs=nHidden)
+                                transpose=False, nInputs=nHidden * seriesLength ** 3)
     Ug = generateRandomVariable(shape=(nHidden, nHidden),
-                                transpose=False, nInputs=nHidden)
+                                transpose=False, nInputs=nHidden * seriesLength ** 3)
 
     Bi = generateRandomVariable(shape=(1, nHidden),
-                                transpose=False, nInputs=nHidden)
+                                transpose=False, nInputs=nHidden * seriesLength ** 3)
     Bf = generateRandomVariable(shape=(1, nHidden),
-                                transpose=False, nInputs=nHidden)
+                                transpose=False, nInputs=nHidden * seriesLength ** 3)
     Bo = generateRandomVariable(shape=(1, nHidden),
-                                transpose=False, nInputs=nHidden)
+                                transpose=False, nInputs=nHidden * seriesLength ** 3)
     Bg = generateRandomVariable(shape=(1, nHidden),
-                                transpose=False, nInputs=nHidden)
+                                transpose=False, nInputs=nHidden * seriesLength ** 3)
 
     Wiop = mainGraph.addOperation(Wi, doGradient=True)
     Wfop = mainGraph.addOperation(Wf, doGradient=True)

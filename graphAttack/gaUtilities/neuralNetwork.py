@@ -52,7 +52,8 @@ def addDenseLayer(mainGraph, nOutputNodes,
         w = Variable(w.T)
 
     if (b is None):
-        b = generateRandomVariable(shape=nOutputNodes, transpose=False, nInputs=4)
+        b = generateRandomVariable(shape=nOutputNodes,
+                                   transpose=False, nInputs=inputOperation.shape[1])
     else:
         b = Variable(b)
 
@@ -129,7 +130,6 @@ def addConv2dLayer(mainGraph,
     N, C, H, W = inputOperation.shape
 
     w = generateRandomVariable(shape=(nFilters, C, filterHeigth, filterWidth),
-                               # transpose=False, nInputs=(filterHeigth * filterHeigth * C))
                                transpose=False, nInputs=(H * W * C))
     b = generateRandomVariable(shape=(1, nFilters, 1, 1), transpose=False, nInputs=(nFilters * 4))
 

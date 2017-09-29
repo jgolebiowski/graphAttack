@@ -128,16 +128,62 @@ class adaptiveSGD(object):
                         print("Mibatch: %d out of %d from epoch: %d out of %d, iterCost is: %e" %
                               (indexMB, self.nMiniBatches, indexE, self.epochs, iterCost))
                     if (printUpdateRate):
-                        print("\tMean of the update rate is %0.7e from (%0.5e, %0.5e)" %
-                              (np.mean(np.abs(self.updateValue)),
-                               np.min(np.abs(self.updateValue)),
-                               np.max(np.abs(self.updateValue))))
+                        print("\tMean of the update momentum: %0.7e variance: %0.7e, beta2T: %07.e" %
+                              (np.mean(np.abs(self.m)),
+                               np.mean(np.abs(self.v)),
+                               np.mean(np.abs(self.beta2T))))
                     if (dumpParameters is not None):
-                        with open(dumpParameters, "wb") as fp:
-                            pickle.dump(self.params, fp)
+                        self.dumpParameters(dumpParameters)
                     iterCost = 0
 
         return self.params
+
+    def dumpParameters(self, filename):
+        """Dump parameters that can be later used ot restore the state
+        The object is a dictionary with
+        
+        params: weigths thet were being minimized
+        
+        m: self.m
+        v: self.v
+        
+        beta1: self.beta1
+        beta2: self.beta2
+        
+        beta1T: self.beta1T
+        beta2T: self.beta2T
+        
+        epsilon: self.epsilon
+        
+        Parameters
+        ----------
+        filename : str
+            name of the file to dump the data into
+        """
+
+        p = dict(params=self.params,
+                 m=self.m,
+                 v=self.v,
+                 beta1=self.beta1,
+                 beta2=self.beta2,
+                 beta1T=self.beta1T,
+                 beta2T=self.beta2T,
+                 epsilon=self.epsilon)
+
+        with open(filename, "wb") as fp:
+            pickle.dump(p, fp)
+
+    def restoreState(self, p):
+        """Restore the minimizer state from the data dumped by dumpParameters"""
+        self.params = p["params"]
+        self.m = p["m"]
+        self.v = p["v"]
+        self.beta1 = p["beta1"]
+        self.beta2 = p["beta2"]
+        self.beta1T = p["beta1T"]
+        self.beta2T = p["beta2T"]
+        self.epsilon = p["epsilon"]
+
 
     def updateMiniBatch(self, params, X, Y):
         """ Make an update with a small batch
@@ -246,8 +292,18 @@ class adaptiveSGDrecurrent(adaptiveSGD):
         self.v = 0
 
         self.miniBatchSize = miniBatchSize
-        self.nMiniBatches = int((len(trainingData) - exampleLength) / miniBatchSize)
+        nMiniBatches = (len(trainingData) - exampleLength) / miniBatchSize
+        if not float(nMiniBatches).is_integer():
+            print("""      WARNING!: self.nMiniBatches =  %f is not an integer whereas it should be
+                nMiniBatchs = (seriesLength - exampleLength) / miniBatchSize
+                in case where exampleLength ==  miniBatchSize an appropriate value is
+                exampleLength = seriesLength / (integer + 1) as long as exLength is also an integer"""
+            % nMiniBatches)
+            print("      Values are: seriesLength == len(trainingData =", len(trainingData))
+            print("                  exampleLength =", exampleLength)
+            print("                  miniBatchSize =", miniBatchSize)
 
+        self.nMiniBatches = int(nMiniBatches)
         self.exampleLength = exampleLength
         self.nExamples = len(trainingData) - exampleLength
 
@@ -296,13 +352,12 @@ class adaptiveSGDrecurrent(adaptiveSGD):
                         print("Mibatch: %d out of %d from epoch: %d out of %d, iterCost is: %e" %
                               (indexMB, self.nMiniBatches, indexE, self.epochs, iterCost))
                     if (printUpdateRate):
-                        print("\tMean of the update rate is %0.7e from (%0.5e, %0.5e)" %
-                              (np.mean(np.abs(self.updateValue)),
-                               np.min(np.abs(self.updateValue)),
-                               np.max(np.abs(self.updateValue))))
+                        print("\tMean of the update momentum: %0.7e variance: %0.7e, beta2T: %07.e" %
+                              (np.mean(np.abs(self.m)),
+                               np.mean(np.abs(self.v)),
+                               np.mean(np.abs(self.beta2T))))
                     if (dumpParameters is not None):
-                        with open(dumpParameters, "wb") as fp:
-                            pickle.dump(self.params, fp)
+                        self.dumpParameters(dumpParameters)
                     iterCost = 0
 
         return self.params
