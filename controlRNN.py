@@ -51,6 +51,9 @@ def f(p, costOperationsList=costOperationsList, mainGraph=mainGraph):
     return c
 
 
+hactivations = [hactivations0, hactivations1]
+cStates = [cStates0, cStates1]
+
 def fprime(p, data, labels, costOperationsList=costOperationsList, mainGraph=mainGraph):
     mainGraph.feederOperation.assignData(data)
     mainGraph.resetAll()
@@ -60,13 +63,19 @@ def fprime(p, data, labels, costOperationsList=costOperationsList, mainGraph=mai
     c = mainGraph.feedForward()
     mainGraph.feedBackward()
     g = mainGraph.unrollGradients()
+
+    nLayers = len(hactivations)
+    for i in range(nLayers):
+        hactivations[i][0].assignData(hactivations[i][-1].getValue())
+        cStates[i][0].assignData(cStates[i][-1].getValue())
+
     return c, g
 
 
 import scipy.optimize
 params = mainGraph.unrollGradientParameters()
 
-numGrad = scipy.optimize.approx_fprime(params, f, 1e-3)
+numGrad = scipy.optimize.approx_fprime(params, f, 1e-6)
 analCostGraph, analGradientGraph = fprime(params, x, testLabels)
 # print(analGradientGraph, analCostGraph)
 # print(analGradientGraph - numGrad)

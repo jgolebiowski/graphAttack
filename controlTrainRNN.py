@@ -10,8 +10,11 @@ with open(pickleFilename, "rb") as fp:
     x, index_to_word, word_to_index = pickle.load(fp)
 
 seriesLength, nFeatures = x.shape
-nExamples = 2
-exampleLength = 15
+# ------ it is important that the exampleLength is the same as 
+# ------ the number if examples in the mini batch so that 
+# ------ the state of the RNN is continously passed forward
+exampleLength = 5
+nExamples = exampleLength
 nHidden0 = 25
 nHidden1 = 25
 
@@ -46,6 +49,9 @@ finalCost, costOperationsList = ga.addRNNCost(mainGraph,
                                               labelsShape=feed.shape,
                                               labels=None)
 
+hactivations = [hactivations0, hactivations1]
+cStates = [cStates0, cStates1]
+nHiddenList = [nHidden0, nHidden1]
 
 def fprime(p, data, labels, costOperationsList=costOperationsList, mainGraph=mainGraph):
     mainGraph.feederOperation.assignData(data)
@@ -56,6 +62,12 @@ def fprime(p, data, labels, costOperationsList=costOperationsList, mainGraph=mai
     c = mainGraph.feedForward()
     mainGraph.feedBackward()
     g = mainGraph.unrollGradients()
+
+    nLayers = len(hactivations)
+    for i in range(nLayers):
+        hactivations[i][0].assignData(hactivations[i][-1].getValue())
+        cStates[i][0].assignData(cStates[i][-1].getValue())
+
     return c, g
 
 
@@ -80,9 +92,6 @@ params = adaGrad.minimize(printTrainigCost=True, printUpdateRate=False,
 #     params = pickle.load(fp)
 mainGraph.attachParameters(params)
 
-hactivations = [hactivations0, hactivations1]
-cStates = [cStates0, cStates1]
-nHiddenList = [nHidden0, nHidden1]
 temp = ga.sampleManyLSTM(100, nFeatures, nHiddenList,
                          hactivations=hactivations,
                          cStates=cStates,
