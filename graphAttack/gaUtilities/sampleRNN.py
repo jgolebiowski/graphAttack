@@ -239,5 +239,5 @@ def sampleManyLSTM(n, nFeatures, nHidden,
         idx = np.random.choice(nextX[0].size, p=nextX[0])
         nextX[:] = 0
         nextX[0, idx] = 1
-        string += array2char(nextX, index_to_word) + ""
+        string += array2char(nextX, index_to_word) + " "
     return string

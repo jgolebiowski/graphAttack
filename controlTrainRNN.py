@@ -5,25 +5,15 @@ import sys
 """Control script"""
 simulationIndex = 0
 
-# pickleFilename = "dataSet/singleSentence.pkl"
-# with open(pickleFilename, "rb") as fp:
-#     x, index_to_word, word_to_index = pickle.load(fp)
-
-# seriesLength, nFeatures = x.shape
-# nExamples = 2
-# exampleLength = 15
-# nHidden0 = 25
-# nHidden1 = 25
-
-pickleFilename = "dataSet/trump_campaignLetters.pkl"
+pickleFilename = "dataSet/singleSentence.pkl"
 with open(pickleFilename, "rb") as fp:
     x, index_to_word, word_to_index = pickle.load(fp)
 
 seriesLength, nFeatures = x.shape
-nExamples = 100
-exampleLength = 30
-nHidden0 = 256
-nHidden1 = 256
+nExamples = 2
+exampleLength = 15
+nHidden0 = 25
+nHidden1 = 25
 
 mainGraph = ga.Graph(False)
 dummyX = np.zeros((nExamples, exampleLength, nFeatures))
@@ -89,11 +79,11 @@ params = adaGrad.minimize(printTrainigCost=True, printUpdateRate=False,
 # with open(pickleFilename, "rb") as fp:
 #     params = pickle.load(fp)
 mainGraph.attachParameters(params)
-1/0
+
 hactivations = [hactivations0, hactivations1]
 cStates = [cStates0, cStates1]
 nHiddenList = [nHidden0, nHidden1]
-temp = ga.sampleManyLSTM(1000, nFeatures, nHiddenList,
+temp = ga.sampleManyLSTM(100, nFeatures, nHiddenList,
                          hactivations=hactivations,
                          cStates=cStates,
                          costOperationsList=costOperationsList,
