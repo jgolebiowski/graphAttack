@@ -63,7 +63,7 @@ param0 = mainGraph.unrollGradientParameters()
 print("Number of parameters to train:", len(param0))
 adaGrad = ga.adaptiveSGDrecurrent(trainingData=x,
                                   param0=param0,
-                                  epochs=1e2,
+                                  epochs=1e3,
                                   miniBatchSize=nExamples,
                                   exampleLength=exampleLength,
                                   initialLearningRate=1e-3,

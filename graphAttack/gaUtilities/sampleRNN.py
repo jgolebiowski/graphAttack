@@ -65,7 +65,8 @@ def sampleManyRNN(n, nFeatures, nHidden,
                   hactivations=None,
                   costOperationsList=None,
                   mainGraph=None,
-                  index_to_word=None):
+                  index_to_word=None,
+                  delimiter=" "):
     """Sample a RNN made out of LSTM gates
 
     Parameters
@@ -113,7 +114,7 @@ def sampleManyRNN(n, nFeatures, nHidden,
         idx = np.random.choice(nextX[0].size, p=nextX[0])
         nextX[:] = 0
         nextX[0, idx] = 1
-        string += array2char(nextX, index_to_word) + " "
+        string += array2char(nextX, index_to_word) + delimiter
     return string
 
 
@@ -186,7 +187,8 @@ def sampleManyLSTM(n, nFeatures, nHidden,
                    cStates=None,
                    costOperationsList=None,
                    mainGraph=None,
-                   index_to_word=None):
+                   index_to_word=None,
+                   delimiter=" "):
     """Sample a RNN made out of LSTM gates
 
     Parameters
@@ -239,5 +241,5 @@ def sampleManyLSTM(n, nFeatures, nHidden,
         idx = np.random.choice(nextX[0].size, p=nextX[0])
         nextX[:] = 0
         nextX[0, idx] = 1
-        string += array2char(nextX, index_to_word) + " "
+        string += array2char(nextX, index_to_word) + delimiter
     return string

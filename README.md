@@ -25,6 +25,16 @@ Setting up and running / training a Recurrent neural network
  - [controlRNN.py]
  - [controlTrainRNN.py]
 
+## GPU support
+Limited GPU support can be made avaliable by modifying the file:
+[graphAttack/gaUtilities/graphAttackFunctions.py]
+
+Commenting out lines 1-2 and uncommenting lines 4-22 will send the dot product computations to your GPU
+
+#### Requirements
+ - [pyCUDA] for GPU computations
+ - [scikit-cuda] for easy access to cuBLAS
+
 ## Additional Resources
 
 http://www.deeplearningbook.org/
@@ -57,3 +67,6 @@ MIT
    [controlTrainRNN.py]: <https://github.com/jgolebiowski/graphAttack/blob/master/controlTrainRNN.py>
    [controlTrainDense.py]: <https://github.com/jgolebiowski/graphAttack/blob/master/controlTrainDense.py>
    [tutorial.ipynb]: <https://github.com/jgolebiowski/graphAttack/blob/master/tutorial.ipynb>
+   [graphAttack/gaUtilities/graphAttackFunctions.py]: <https://github.com/jgolebiowski/graphAttack/blob/master/graphAttack/gaUtilities/graphAttackFunctions.py>
+   [pyCUDA]: <https://developer.nvidia.com/pycuda>
+   [scikit-cuda]: <http://scikit-cuda.readthedocs.io/en/latest/index.html#>
