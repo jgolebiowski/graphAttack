@@ -2,6 +2,7 @@
 
 from ..coreOperation import *
 from ..coreNode import broadcast_shape, reduce_shape
+from ..gaUtilities import graphAttackFunctions as gaf
 
 import numpy as np
 
@@ -322,7 +323,7 @@ class MatMatmulOperation(TwoInputOperation):
         np.aarray
             Result of the operation
         """
-        return np.matmul(a, b)
+        return gaf.matmul(a, b)
 
     def performGradient(self, input):
         """Find out the gradient with respect to the parameter
@@ -355,8 +356,8 @@ class MatMatmulOperation(TwoInputOperation):
                 grad += out.getGradient(self)
 
         if (input == 0):
-            grad = np.matmul(grad, self.inputB.getValue().T)
+            grad = gaf.matmul(grad, self.inputB.getValue().T)
         elif (input == 1):
-            grad = np.matmul(self.inputA.getValue().T, grad)
+            grad = gaf.matmul(self.inputA.getValue().T, grad)
 
         return grad

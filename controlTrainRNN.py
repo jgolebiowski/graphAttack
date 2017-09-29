@@ -4,18 +4,26 @@ import pickle
 import sys
 """Control script"""
 simulationIndex = 0
-# simulationIndex = int(sys.argv[1])
 
-pickleFilename = "dataSet/multipleSentenceLetters.pkl"
-# pickleFilename = "dataSet/trump_campaign.pkl"
+# pickleFilename = "dataSet/singleSentence.pkl"
+# with open(pickleFilename, "rb") as fp:
+#     x, index_to_word, word_to_index = pickle.load(fp)
+
+# seriesLength, nFeatures = x.shape
+# nExamples = 2
+# exampleLength = 15
+# nHidden0 = 25
+# nHidden1 = 25
+
+pickleFilename = "dataSet/trump_campaignLetters.pkl"
 with open(pickleFilename, "rb") as fp:
     x, index_to_word, word_to_index = pickle.load(fp)
 
 seriesLength, nFeatures = x.shape
-nExamples = 10
-exampleLength = 25
-nHidden0 = 128
-nHidden1 = 128
+nExamples = 100
+exampleLength = 30
+nHidden0 = 256
+nHidden1 = 256
 
 mainGraph = ga.Graph(False)
 dummyX = np.zeros((nExamples, exampleLength, nFeatures))
@@ -65,7 +73,7 @@ param0 = mainGraph.unrollGradientParameters()
 print("Number of parameters to train:", len(param0))
 adaGrad = ga.adaptiveSGDrecurrent(trainingData=x,
                                   param0=param0,
-                                  epochs=1e3,
+                                  epochs=1e2,
                                   miniBatchSize=nExamples,
                                   exampleLength=exampleLength,
                                   initialLearningRate=1e-3,
@@ -80,9 +88,8 @@ params = adaGrad.minimize(printTrainigCost=True, printUpdateRate=False,
 # pickleFilename = "paramsRNN_" + str(simulationIndex) + ".pkl"
 # with open(pickleFilename, "rb") as fp:
 #     params = pickle.load(fp)
-
 mainGraph.attachParameters(params)
-
+1/0
 hactivations = [hactivations0, hactivations1]
 cStates = [cStates0, cStates1]
 nHiddenList = [nHidden0, nHidden1]

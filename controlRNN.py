@@ -66,7 +66,7 @@ def fprime(p, data, labels, costOperationsList=costOperationsList, mainGraph=mai
 import scipy.optimize
 params = mainGraph.unrollGradientParameters()
 
-numGrad = scipy.optimize.approx_fprime(params, f, 1e-8)
+numGrad = scipy.optimize.approx_fprime(params, f, 1e-3)
 analCostGraph, analGradientGraph = fprime(params, x, testLabels)
 # print(analGradientGraph, analCostGraph)
 # print(analGradientGraph - numGrad)

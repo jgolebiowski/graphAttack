@@ -2,6 +2,7 @@
 
 from ..coreOperation import *
 from ..coreNode import broadcast_shape, reduce_shape
+from ..gaUtilities import graphAttackFunctions as gaf
 
 import numpy as np
 
@@ -115,7 +116,7 @@ class Conv2dOperation(TwoInputOperation):
         self.inputBCols = bCol
 
         # ------ Obtain the 2d representation of the output
-        outCol = np.matmul(aCol, bCol.T)
+        outCol = gaf.matmul(aCol, bCol.T)
 
         # ------ Convert into appropriate shape
         outMat = outCol
@@ -166,11 +167,11 @@ class Conv2dOperation(TwoInputOperation):
         gradCols = gradCols.reshape(-1, NF)
 
         if (input == 0):
-            gradCols = np.matmul(gradCols, self.inputBCols)
+            gradCols = gaf.matmul(gradCols, self.inputBCols)
             grad = col2im_indices(gradCols, self.inputA.shape, FH, FW,
                                   padding=self.padding, stride=self.stride)
         elif (input == 1):
-            gradCols = np.matmul(self.inputACols.T, gradCols)
+            gradCols = gaf.matmul(self.inputACols.T, gradCols)
             grad = gradCols.T.reshape(self.inputB.shape)
 
         return grad
