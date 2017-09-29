@@ -61,6 +61,7 @@ def prepareCharacterTokenized(seedName):
         text = fp.read()
     
     tokens = list(text)
+    print("Number of words: ", len(tokens))
     index_to_word = [chr(index) for index in range(128)]
     index_to_word = dict(enumerate(index_to_word))
     word_to_index = {v: k for k, v in index_to_word.items()}
@@ -80,3 +81,10 @@ def prepareCharacterTokenized(seedName):
 
 def f2(indexf2, index_to_word):
     print(index_to_word[np.argmax(hotText[indexf2])])
+
+def findExampleLength(ind):
+    """Use this to find the optimal length of the example for RNNs"""
+    for i in range(2, ind):
+        t =  ind / (i + 1.0)
+        if t.is_integer():
+            print(i, t)

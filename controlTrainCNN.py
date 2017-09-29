@@ -103,12 +103,15 @@ adaGrad = ga.adaptiveSGD(trainingData=X,
                          testFrequency=1e2,
                          function=fprime)
 
-params = adaGrad.minimize(printTrainigCost=True, printUpdateRate=False,
-                          dumpParameters="paramsCNN_" + str(index) + ".pkl")
+pickleFilename = "minimizerParamsCNN_" + str(simulationIndex) + ".pkl"
 
-# pickleFilename = "paramsCNN_" + str(index) + ".pkl"
 # with open(pickleFilename, "rb") as fp:
-#     params = pickle.load(fp)
+#     adamParams = pickle.load(fp)
+#     adaGrad.restoreState(adamParams)
+#     params = adamParams["params"]
+
+params = adaGrad.minimize(printTrainigCost=True, printUpdateRate=False,
+                          dumpParameters=pickleFilename)
 
 
 mainGraph.attachParameters(params)

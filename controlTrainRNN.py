@@ -13,7 +13,7 @@ seriesLength, nFeatures = x.shape
 # ------ it is important that the exampleLength is the same as 
 # ------ the number if examples in the mini batch so that 
 # ------ the state of the RNN is continously passed forward
-exampleLength = 5
+exampleLength = 4
 nExamples = exampleLength
 nHidden0 = 25
 nHidden1 = 25
@@ -82,14 +82,18 @@ adaGrad = ga.adaptiveSGDrecurrent(trainingData=x,
                                   beta1=0.9,
                                   beta2=0.999,
                                   epsilon=1e-8,
-                                  testFrequency=1e3,
+                                  testFrequency=1e2,
                                   function=fprime)
 
+pickleFilename = "minimizerParamsRNN_" + str(simulationIndex) + ".pkl"
+
+with open(pickleFilename, "rb") as fp:
+    adamParams = pickle.load(fp)
+    adaGrad.restoreState(adamParams)
+    params = adamParams["params"]
+
 params = adaGrad.minimize(printTrainigCost=True, printUpdateRate=False,
-                          dumpParameters="paramsRNN_" + str(simulationIndex) + ".pkl")
-# pickleFilename = "paramsRNN_" + str(simulationIndex) + ".pkl"
-# with open(pickleFilename, "rb") as fp:
-#     params = pickle.load(fp)
+                          dumpParameters=pickleFilename)
 mainGraph.attachParameters(params)
 
 temp = ga.sampleManyLSTM(100, nFeatures, nHiddenList,

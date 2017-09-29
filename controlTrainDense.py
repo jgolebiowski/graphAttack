@@ -68,16 +68,16 @@ adamGrad = ga.adaptiveSGD(trainingData=X,
                           testFrequency=1e2,
                           function=fprime)
 
-params = adamGrad.minimize(printTrainigCost=True, printUpdateRate=False,
-                           dumpParameters="paramsDense" + str(index) + ".pkl")
-mainGraph.attachParameters(params)
+pickleFilename = "minimizerParamsDense_" + str(simulationIndex) + ".pkl"
 
-pickleFileName = "graphSGD_" + str(index) + ".pkl"
-with open(pickleFileName, "wb") as fp:
-    mainGraph.resetAll()
-    pickle.dump(mainGraph, fp)
-with open(pickleFileName, "rb") as fp:
-    mainGraph = pickle.load(fp)
+# with open(pickleFilename, "rb") as fp:
+#     adamParams = pickle.load(fp)
+#     adaGrad.restoreState(adamParams)
+#     params = adamParams["params"]
+
+params = adaGrad.minimize(printTrainigCost=True, printUpdateRate=False,
+                          dumpParameters=pickleFilename)
+mainGraph.attachParameters(params)
 
 print("train: Trained with:", index)
 print("train: Accuracy on train set:", ga.calculateAccuracy(mainGraph, X, Y))
