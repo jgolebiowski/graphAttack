@@ -10,8 +10,8 @@ with open(pickleFilename, "rb") as fp:
     x, index_to_word, word_to_index = pickle.load(fp)
 
 seriesLength, nFeatures = x.shape
-# ------ it is important that the exampleLength is the same as 
-# ------ the number if examples in the mini batch so that 
+# ------ it is important that the exampleLength is the same as
+# ------ the number if examples in the mini batch so that
 # ------ the state of the RNN is continously passed forward
 exampleLength = 4
 nExamples = exampleLength
@@ -53,6 +53,7 @@ hactivations = [hactivations0, hactivations1]
 cStates = [cStates0, cStates1]
 nHiddenList = [nHidden0, nHidden1]
 
+
 def fprime(p, data, labels, costOperationsList=costOperationsList, mainGraph=mainGraph):
     mainGraph.feederOperation.assignData(data)
     mainGraph.resetAll()
@@ -73,27 +74,27 @@ def fprime(p, data, labels, costOperationsList=costOperationsList, mainGraph=mai
 
 param0 = mainGraph.unrollGradientParameters()
 print("Number of parameters to train:", len(param0))
-adaGrad = ga.adaptiveSGDrecurrent(trainingData=x,
-                                  param0=param0,
-                                  epochs=1e3,
-                                  miniBatchSize=nExamples,
-                                  exampleLength=exampleLength,
-                                  initialLearningRate=1e-3,
-                                  beta1=0.9,
-                                  beta2=0.999,
-                                  epsilon=1e-8,
-                                  testFrequency=1e2,
-                                  function=fprime)
+adamGrad = ga.adaptiveSGDrecurrent(trainingData=x,
+                                   param0=param0,
+                                   epochs=1e3,
+                                   miniBatchSize=nExamples,
+                                   exampleLength=exampleLength,
+                                   initialLearningRate=1e-3,
+                                   beta1=0.9,
+                                   beta2=0.999,
+                                   epsilon=1e-8,
+                                   testFrequency=1e2,
+                                   function=fprime)
 
 pickleFilename = "minimizerParamsRNN_" + str(simulationIndex) + ".pkl"
 
-with open(pickleFilename, "rb") as fp:
-    adamParams = pickle.load(fp)
-    adaGrad.restoreState(adamParams)
-    params = adamParams["params"]
+# with open(pickleFilename, "rb") as fp:
+#     adamParams = pickle.load(fp)
+#     adamGrad.restoreState(adamParams)
+#     params = adamParams["params"]
 
-params = adaGrad.minimize(printTrainigCost=True, printUpdateRate=False,
-                          dumpParameters=pickleFilename)
+params = adamGrad.minimize(printTrainigCost=True, printUpdateRate=False,
+                           dumpParameters=pickleFilename)
 mainGraph.attachParameters(params)
 
 temp = ga.sampleManyLSTM(100, nFeatures, nHiddenList,

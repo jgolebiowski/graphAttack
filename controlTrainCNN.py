@@ -20,8 +20,8 @@ Xvalid = allDatasets["valid_dataset"]
 Yvalid = allDatasets["valid_labels"]
 
 # index = int(sys.argv[1])
-index = 0
-print("Training with:", index)
+simulationIndex = 0
+print("Training with:", simulationIndex)
 dropValueL = 0.1
 dropValueS = 0.05
 # ------ Build a LeNet archicture CNN
@@ -91,32 +91,32 @@ def fprime(p, data, labels):
 
 
 param0 = mainGraph.unrollGradientParameters()
-adaGrad = ga.adaptiveSGD(trainingData=X,
-                         trainingLabels=Y,
-                         param0=param0,
-                         epochs=10,
-                         miniBatchSize=2,
-                         initialLearningRate=1e-3,
-                         beta1=0.9,
-                         beta2=0.999,
-                         epsilon=1e-8,
-                         testFrequency=1e2,
-                         function=fprime)
+adamGrad = ga.adaptiveSGD(trainingData=X,
+                          trainingLabels=Y,
+                          param0=param0,
+                          epochs=10,
+                          miniBatchSize=2,
+                          initialLearningRate=1e-3,
+                          beta1=0.9,
+                          beta2=0.999,
+                          epsilon=1e-8,
+                          testFrequency=1e2,
+                          function=fprime)
 
 pickleFilename = "minimizerParamsCNN_" + str(simulationIndex) + ".pkl"
 
 # with open(pickleFilename, "rb") as fp:
 #     adamParams = pickle.load(fp)
-#     adaGrad.restoreState(adamParams)
+#     adamGrad.restoreState(adamParams)
 #     params = adamParams["params"]
 
-params = adaGrad.minimize(printTrainigCost=True, printUpdateRate=False,
-                          dumpParameters=pickleFilename)
+params = adamGrad.minimize(printTrainigCost=True, printUpdateRate=False,
+                           dumpParameters=pickleFilename)
 
 
 mainGraph.attachParameters(params)
 
-pickleFileName = "graphSGD_" + str(index) + ".pkl"
+pickleFileName = "graphSGD_" + str(simulationIndex) + ".pkl"
 with open(pickleFileName, "wb") as fp:
     mainGraph.resetAll()
     pickle.dump(mainGraph, fp)
