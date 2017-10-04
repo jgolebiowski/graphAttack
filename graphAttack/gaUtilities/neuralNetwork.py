@@ -130,8 +130,8 @@ def addConv2dLayer(mainGraph,
     N, C, H, W = inputOperation.shape
 
     w = generateRandomVariable(shape=(nFilters, C, filterHeigth, filterWidth),
-                               transpose=False, nInputs=(H * W * C))
-    b = generateRandomVariable(shape=(1, nFilters, 1, 1), transpose=False, nInputs=(nFilters * 4))
+                               transpose=False, nInputs=(filterHeigth * filterWidth * C))
+    b = generateRandomVariable(shape=(1, nFilters, 1, 1), transpose=False, nInputs=1)
 
     filterWop = mainGraph.addOperation(w, doGradient=True, feederOperation=False)
     opConv2d = mainGraph.addOperation(Conv2dOperation(
