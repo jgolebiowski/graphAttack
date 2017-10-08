@@ -24,7 +24,7 @@ print(("Training with:", simulationIndex))
 mainGraph = ga.Graph()
 ffeed = mainGraph.addOperation(ga.Variable(X), doGradient=False, feederOperation=True)
 feedDrop = mainGraph.addOperation(ga.DropoutOperation(
-    ffeed, 0.25), doGradient=False, finalOperation=False)
+    ffeed, 0.0), doGradient=False, finalOperation=False)
 
 l1 = ga.addDenseLayer(mainGraph, 100,
                       inputOperation=feedDrop,
@@ -37,7 +37,7 @@ l2 = ga.addDenseLayer(mainGraph, 10,
                       inputOperation=l1,
                       activation=ga.SoftmaxActivation,
                       dropoutRate=0,
-                      batchNormalisation=True,
+                      batchNormalisation=False,
                       w=None,
                       b=None)
 fcost = mainGraph.addOperation(

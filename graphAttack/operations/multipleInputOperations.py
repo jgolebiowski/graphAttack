@@ -49,7 +49,7 @@ class BatchNormalisationOperation(MultipleInputOperation):
     def reset(self):
         """Reset the values and gradients held by this operation"""
         self.result = None
-        self.gradA = None
+        self.grads = [None for item in self.inputs]
         self.setShape()
 
     def setShape(self):
@@ -79,7 +79,7 @@ class BatchNormalisationOperation(MultipleInputOperation):
             mu = np.mean(a, axis=0, keepdims=True)
             var = np.var(a, axis=0, keepdims=True)
             self.lastaMean = (a - mu)
-            self.lastVarInv = 1 / np.sqrt(var + 1e-8)
+            self.lastVarInv = 1. / np.sqrt(var + 1e-8)
             self.lastaNorm = self.lastaMean * self.lastVarInv
 
             self.muMean = self.muMean * (1 - self.running_param) + mu * self.running_param
