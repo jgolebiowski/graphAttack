@@ -7,6 +7,7 @@ from ..operations.twoInputOperations import *
 from ..operations.singleInputOperations import *
 from ..operations.convolutionOperation import *
 from ..operations.transformationOperations import *
+from ..operations.multipleInputOperations import *
 from .misc import generateRandomVariable, generateZeroVariable
 
 
@@ -14,6 +15,7 @@ def addDenseLayer(mainGraph, nOutputNodes,
                   inputOperation=None,
                   activation=ReLUActivation,
                   dropoutRate=0,
+                  batchNormalisation=True,
                   w=None,
                   b=None):
     """Append a dense layer to the graph
@@ -30,6 +32,8 @@ def addDenseLayer(mainGraph, nOutputNodes,
         activatin operation of choice
     dropoutRate : float
         dropout rate at the end of this layer
+    batchNormalisation: bool
+        Whether to use Batch normalisation
     w : np.array
         weigthts in shape (nOutputNodes, nFeatures)
         if None randomly initialized
@@ -42,18 +46,19 @@ def addDenseLayer(mainGraph, nOutputNodes,
     ga.Operation
         Last operation of the dense layer
     """
+    N, D = inputOperation.shape
     if (inputOperation is None):
         inputOperation = mainGraph.operations[-1]
 
     if (w is None):
-        w = generateRandomVariable(shape=(nOutputNodes, inputOperation.shape[1]),
-                                   transpose=True, nInputs=inputOperation.shape[1])
+        w = generateRandomVariable(shape=(nOutputNodes, D),
+                                   transpose=True, nInputs=D)
     else:
         w = Variable(w.T)
 
     if (b is None):
         b = generateRandomVariable(shape=nOutputNodes,
-                                   transpose=False, nInputs=inputOperation.shape[1])
+                                   transpose=False, nInputs=D)
     else:
         b = Variable(b)
 
@@ -74,7 +79,14 @@ def addDenseLayer(mainGraph, nOutputNodes,
     else:
         dpo = addo
 
-    acto = mainGraph.addOperation(activation(dpo),
+    if (batchNormalisation):
+        beta = mainGraph.addOperation(generateRandomVariable((1, nOutputNodes)), doGradient=True)
+        gamma = mainGraph.addOperation(generateRandomVariable((1, nOutputNodes)), doGradient=True)
+        bnorm = mainGraph.addOperation(BatchNormalisationOperation(dpo, beta, gamma))
+    else:
+        bnorm = dpo
+
+    acto = mainGraph.addOperation(activation(bnorm),
                                   doGradient=False,
                                   finalOperation=False)
     return acto

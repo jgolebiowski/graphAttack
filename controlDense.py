@@ -2,27 +2,27 @@ import graphAttack as ga
 import numpy as np
 """Control script"""
 
+N, D, H1, H2 = 10, 3, 4, 2
 
-sizes = np.array([3, 4, 2])
-
-Xcheck2 = np.arange(1, 7).reshape((2, 3)).astype(np.float)
-Ycheck2 = np.array([[1, 0], [0, 1]]).astype(np.float)
-
+Xcheck2 = np.arange(0, N * D).reshape(N, D).astype(np.float)
+Ycheck2 = np.arange(0, N * H2).reshape(N, H2).astype(np.float)
 mainGraph = ga.Graph()
 
 ffeed = mainGraph.addOperation(ga.Variable(Xcheck2), doGradient=False, feederOperation=True)
 feedDrop = mainGraph.addOperation(ga.DropoutOperation(ffeed, 0.0), doGradient=False, finalOperation=False)
 
-l1 = ga.addDenseLayer(mainGraph, 4,
+l1 = ga.addDenseLayer(mainGraph, H1,
                       inputOperation=feedDrop,
                       activation=ga.ReLUActivation,
                       dropoutRate=0.0,
+                      batchNormalisation=True,
                       w=None,
                       b=None)
-l2 = ga.addDenseLayer(mainGraph, 2,
+l2 = ga.addDenseLayer(mainGraph, H2,
                       inputOperation=l1,
                       activation=ga.SoftmaxActivation,
                       dropoutRate=0.0,
+                      batchNormalisation=True,
                       w=None,
                       b=None)
 fcost = mainGraph.addOperation(
@@ -54,5 +54,8 @@ def fprime(p, data, labels):
 
 numGrad = scipy.optimize.approx_fprime(params, f, 1e-4)
 analCostGraph, analGradientGraph = fprime(params, Xcheck2, Ycheck2)
-print(analGradientGraph - numGrad, analCostGraph)
+print("analGrad     numGrad     diff")
+for index in range(len(params)):
+    print("%12.5e %12.5e %12.5e" %
+          (analGradientGraph[index], numGrad[index], analGradientGraph[index] - numGrad[index]))
 print(np.sum(np.abs(analGradientGraph - numGrad)), np.sum(np.abs(analGradientGraph)))

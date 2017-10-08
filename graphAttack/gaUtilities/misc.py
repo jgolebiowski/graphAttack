@@ -4,7 +4,7 @@ import numpy as np
 from ..coreDataContainers import Variable
 
 
-def generateRandomVariable(shape, transpose=False, nInputs=None):
+def generateRandomVariable(shape, transpose=False, nInputs=1):
     """Generate a ga.Variable of a given shape filled with random values
     from a Gaussian distribution with mean 0.
     If the transpose flag is set, generate a Variable that is the transpose of a

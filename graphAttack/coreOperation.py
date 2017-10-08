@@ -239,6 +239,102 @@ class SingleInputOperation(Operation):
             raise ValueError("Must select gradient from inputA")
 
 
+class MultipleInputOperation(Operation):
+    """Operation accepting multiple inputs and returning one output
+
+    Attributes
+    ----------
+    name : str
+        Name of the operation
+    result : np.array
+        Output of the operation
+    testing : bool
+        Flag specifying if the operation is in testing (making prefictions: True)
+        or training (optimizing parameters: False) mode
+
+    grads : list(np.array)
+        gradients with respect to inouts grads[i]: gradient iwht respect to input i
+    inputs : list(ga.Operation)
+        Operations feeding data into this operation
+    shape : tuple
+        shape of the output
+    """
+    name = "MultipleInputOperation"
+
+    def __init__(self, *args):
+        super().__init__()
+        self.result = None
+        self.inputs = [*args]
+        self.grads = [None for item in self.inputs]
+        for item in self.inputs:
+            item.addOutput(self)
+
+        self.setShape()
+
+    def __repr__(self):
+        """Represent as a string - usefull for printing"""
+        output = "<%s with inputs: (" % (self.name)
+        for op in self.inputs:
+            output += "%s" % op.name
+
+        output += ") and outputs: ("
+
+        for op in self.outputs:
+            output += "%s, " % op.name
+        output += ")>"
+        return output
+
+    def setShape(self):
+        """Set the output shape"""
+        raise NotImplementedError("This should be implemented individually")
+
+    def reset(self):
+        """Reset the values and gradients held by this operation"""
+        self.result = None
+        self.grads = [None for item in self.inputs]
+        self.setShape()
+
+    def getValue(self):
+        """Return a vaue of this operation
+
+        Returns
+        -------
+        np.array
+            Output value
+        """
+        if (self.result is None):
+            values = [op.getValue() for op in self.inputs]
+            self.result = self.perform(*values)
+        return self.result
+
+    def getGradient(self, input):
+        """Obtain gradient with respect ot a chosen input
+
+        Parameters
+        ----------
+        input : ga.Operation
+            Operation with respect to which the graient is calculated
+
+        Returns
+        -------
+        np.array
+            Gradient value
+
+        Raises
+        ------
+        ValueError
+            Must select either gradient from inputA or inputB
+        """
+
+        for index in range(len(self.inputs)):
+            if (input is self.inputs[index]):
+                if (self.grads[index] is None):
+                    self.grads[index] = self.performGradient(input=index)
+                return self.grads[index]
+        else:
+            raise ValueError("Must select a gradient of one of the inputs")
+
+
 class CostOperation(SingleInputOperation):
     """Operation accepting one input and one label, returning the cost
     Labels are to be provided as a standard numpy array, not an operation.
