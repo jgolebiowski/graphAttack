@@ -2,7 +2,7 @@
 
 Computational graph library for machine learning. The main point is to combine mathematical operation together to form a workflow of choice. The graph takes care of evaluating the gradient of all the inputs to ease up setting up the minimizer.
 
-I have aimed for the library to be simple and transparent so that it would be easy to understand and modify to fit individual needs. Performance was not the main objective as there are plenty of fast alternatives; the aim was smaller, educational models.
+I have aimed for the library to be simple and transparent so that it would be easy to understand and modify to fit individual needs. The performance was not the primary objective as there are plenty of fast alternatives; the aim was smaller, educational models.
 
 All feedback and ideas for improvement welcome.
 
@@ -32,6 +32,10 @@ Matrix operations
 
 Regularization
 - Dropout
+
+Optimisation
+- Adam SGD minimizer
+...Support for batches and continuous series
 - Batch Normalisation
 
 Activations
@@ -51,7 +55,7 @@ Cost operations
 Misc
 - Reshape / flatten
 - Slice
-- Sum all elements / axis
+- Sum all elements/axis
 - Sum all elements squared
 - element-wise exponent
 
@@ -71,7 +75,7 @@ Commenting out lines 1-2 and uncommenting lines 4-22 will send the dot product c
 ## Additional Resources
 
 http://www.deeplearningbook.org/
-section 6.5.1 for more information on computational graphs and the rest of the book for more information about ML/deep learning.
+section 6.5.1 for more information on computational graphs and the rest of the book for more details about ML/deep learning.
 
 
 ### Dependencies
