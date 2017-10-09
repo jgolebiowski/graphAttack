@@ -32,9 +32,6 @@ Matrix operations
 
 Regularization
 - Dropout
-
-Optimisation
-- Adam SGD minimizer, support for batches and continuous series
 - Batch Normalisation
 
 Activations
@@ -50,6 +47,9 @@ Convolution
 Cost operations
 - Quadratic cost
 - Cross-entropy for softmax activation
+
+Optimisation
+- Adam SGD minimizer, support for batches and continuous series
 
 Misc
 - Reshape / flatten
