@@ -15,9 +15,7 @@ def addDenseLayer(mainGraph, nOutputNodes,
                   inputOperation=None,
                   activation=ReLUActivation,
                   dropoutRate=0,
-                  batchNormalisation=False,
-                  w=None,
-                  b=None):
+                  batchNormalisation=False):
     """Append a dense layer to the graph
 
     Parameters
@@ -50,17 +48,10 @@ def addDenseLayer(mainGraph, nOutputNodes,
     if (inputOperation is None):
         inputOperation = mainGraph.operations[-1]
 
-    if (w is None):
-        w = generateRandomVariable(shape=(nOutputNodes, D),
-                                   transpose=True, nInputs=D)
-    else:
-        w = Variable(w.T)
-
-    if (b is None):
-        b = generateRandomVariable(shape=nOutputNodes,
-                                   transpose=False, nInputs=1)
-    else:
-        b = Variable(b)
+    w = generateRandomVariable(shape=(nOutputNodes, D),
+                               transpose=True, nInputs=D)
+    b = generateRandomVariable(shape=nOutputNodes,
+                               transpose=False, nInputs=1)
 
     wo = mainGraph.addOperation(w, doGradient=True)
     bo = mainGraph.addOperation(b, doGradient=True)

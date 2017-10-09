@@ -4,8 +4,6 @@ Computational graph library for machine learning. The main point is to combine m
 
 I have aimed for the library to be simple and transparent so that it would be easy to understand and modify to fit individual needs. Performance was not the main objective as there are plenty of fast alternatives; the aim was smaller, educational models.
 
-Currently, supports most of the useful matrix operations, the Adam stochastic minimizer as well as modules for simplified deployment of dense, convolution and recurrent (vanilla and LSTM) networks.
-
 All feedback and ideas for improvement welcome.
 
 
@@ -24,14 +22,49 @@ Setting up and running / training a Convolution neural network model
 Setting up and running / training a Recurrent neural network
  - [controlRNN.py]
  - [controlTrainRNN.py]
+ 
+### Features
+Matrix operations
+- Dot product
+- Hadamard product
+- element-wise division
+- addition
 
-## GPU support
+Regularization
+- Dropout
+- Batch Normalisation
+
+Activations
+- ReLU
+- Sigmoid
+- Tanh
+- Softmax
+
+Convolution
+- 2d convolution
+- Max Pooling
+
+Cost operations
+- Quadratic cost
+- Cross-entropy for softmax activation
+
+Misc
+- Reshape / flatten
+- Slice
+- Sum all elements / axis
+- Sum all elements squared
+- element-wise exponent
+
+
+
+
+### GPU Support
 Limited GPU support can be made avaliable by modifying the file:
 [graphAttack/gaUtilities/graphAttackFunctions.py]
 
 Commenting out lines 1-2 and uncommenting lines 4-22 will send the dot product computations to your GPU
 
-#### Requirements
+##### Requirements
  - [pyCUDA] for GPU computations
  - [scikit-cuda] for easy access to cuBLAS
 
