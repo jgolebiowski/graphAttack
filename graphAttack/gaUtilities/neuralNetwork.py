@@ -91,6 +91,7 @@ def addConv2dLayer(mainGraph,
                    padding="SAME",
                    convStride=1,
                    activation=ReLUActivation,
+                   batchNormalisation=False,
                    pooling=MaxPoolOperation,
                    poolHeight=2,
                    poolWidth=2,
@@ -115,6 +116,8 @@ def addConv2dLayer(mainGraph,
         stride for the convolution filter
     activation : ga.SingleInputOperation
         activatin operation of choice
+    batchNormalisation: bool
+        Whether to use Batch normalisation
     pooling : ga.SingleInputOperation
         pooling operation of choice
     poolHeight : int
@@ -143,7 +146,14 @@ def addConv2dLayer(mainGraph,
     filterBop = mainGraph.addOperation(b, doGradient=True, feederOperation=False)
     addConv2d = mainGraph.addOperation(AddOperation(opConv2d, filterBop))
 
-    actop = mainGraph.addOperation(activation(addConv2d),
+    if (batchNormalisation):
+        beta = mainGraph.addOperation(generateRandomVariable((1, *addConv2d.shape[1:])), doGradient=True)
+        gamma = mainGraph.addOperation(generateRandomVariable((1, *addConv2d.shape[1:])), doGradient=True)
+        bnorm = mainGraph.addOperation(BatchNormalisationOperation(addConv2d, beta, gamma))
+    else:
+        bnorm = addConv2d
+
+    actop = mainGraph.addOperation(activation(bnorm),
                                    doGradient=False,
                                    finalOperation=False)
 

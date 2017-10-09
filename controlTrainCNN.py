@@ -39,6 +39,7 @@ cnn1 = ga.addConv2dLayer(mainGraph,
                          padding="SAME",
                          convStride=1,
                          activation=ga.ReLUActivation,
+                         batchNormalisation=False,
                          pooling=ga.MaxPoolOperation,
                          poolHeight=2,
                          poolWidth=2,
@@ -52,6 +53,7 @@ cnn2 = ga.addConv2dLayer(mainGraph,
                          padding="SAME",
                          convStride=1,
                          activation=ga.ReLUActivation,
+                         batchNormalisation=True,
                          pooling=ga.MaxPoolOperation,
                          poolHeight=2,
                          poolWidth=2,
@@ -65,14 +67,12 @@ l1 = ga.addDenseLayer(mainGraph, 500,
                       inputOperation=flattenDrop,
                       activation=ga.ReLUActivation,
                       dropoutRate=dropValueL,
-                      w=None,
-                      b=None)
+                      batchNormalisation=True)
 l2 = ga.addDenseLayer(mainGraph, 10,
                       inputOperation=l1,
                       activation=ga.SoftmaxActivation,
                       dropoutRate=0.0,
-                      w=None,
-                      b=None)
+                      batchNormalisation=False)
 fcost = mainGraph.addOperation(
     ga.CrossEntropyCostSoftmax(l2, Y),
     doGradient=False,
@@ -95,12 +95,12 @@ adamGrad = ga.adaptiveSGD(trainingData=X,
                           trainingLabels=Y,
                           param0=param0,
                           epochs=10,
-                          miniBatchSize=2,
-                          initialLearningRate=1e-3,
+                          miniBatchSize=10,
+                          initialLearningRate=1e-2,
                           beta1=0.9,
                           beta2=0.999,
                           epsilon=1e-8,
-                          testFrequency=1e2,
+                          testFrequency=1e1,
                           function=fprime)
 
 pickleFilename = "minimizerParamsCNN_" + str(simulationIndex) + ".pkl"
@@ -123,7 +123,7 @@ with open(pickleFileName, "wb") as fp:
 with open(pickleFileName, "rb") as fp:
     mainGraph = pickle.load(fp)
 
-print("train: Trained with:", index)
+print("train: Trained with:", simulationIndex)
 print("train: Accuracy on the train set:", ga.calculateAccuracy(mainGraph, X, Y))
 print("train: Accuracy on cv set:", ga.calculateAccuracy(mainGraph, Xvalid, Yvalid))
 print("train: Accuracy on test set:", ga.calculateAccuracy(mainGraph, Xtest, Ytest))
