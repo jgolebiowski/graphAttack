@@ -34,8 +34,7 @@ Regularization
 - Dropout
 
 Optimisation
-- Adam SGD minimizer
-...Support for batches and continuous series
+- Adam SGD minimizer, support for batches and continuous series
 - Batch Normalisation
 
 Activations
