@@ -264,7 +264,7 @@ class MultipleInputOperation(Operation):
     def __init__(self, *args):
         super().__init__()
         self.result = None
-        self.inputs = [*args]
+        self.inputs = list(args)
         self.grads = [None for item in self.inputs]
         for item in self.inputs:
             item.addOutput(self)
