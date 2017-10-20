@@ -116,13 +116,6 @@ params = adamGrad.minimize(printTrainigCost=True, printUpdateRate=False,
 
 mainGraph.attachParameters(params)
 
-pickleFileName = "graphSGD_" + str(simulationIndex) + ".pkl"
-with open(pickleFileName, "wb") as fp:
-    mainGraph.resetAll()
-    pickle.dump(mainGraph, fp)
-with open(pickleFileName, "rb") as fp:
-    mainGraph = pickle.load(fp)
-
 print("train: Trained with:", simulationIndex)
 print("train: Accuracy on the train set:", ga.calculateAccuracy(mainGraph, X, Y))
 print("train: Accuracy on cv set:", ga.calculateAccuracy(mainGraph, Xvalid, Yvalid))
