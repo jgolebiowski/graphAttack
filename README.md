@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/jgolebiowski/graphAttack.svg?branch=master)](https://travis-ci.org/jgolebiowski/graphAttack)
 
-Computational graph library for machine learning. The main point is to combine mathematical operation together to form a workflow of choice. The graph takes care of evaluating the gradient of all the inputs to ease up setting up the minimizer.
+​GraphAttack is a simple computational graph library for machine learning in pure Python (you can think of simple tensorflow). The main point is to combine mathematical operation together to form a workflow of choice in the form of a graph. The graph then takes care of pushing the data forward and propagating the gradients backwards.
 
 I have aimed for the library to be simple and transparent so that it would be easy to understand and modify to fit individual needs. The performance was not the primary objective as there are plenty of fast alternatives; the aim was smaller, educational models.
 
